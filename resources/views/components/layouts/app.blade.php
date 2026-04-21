@@ -42,12 +42,8 @@
         {{-- Marca --}}
         <div class="px-5 py-5 border-b border-pink-100">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500
-                            flex items-center justify-center shadow-sm flex-shrink-0">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
-                    </svg>
+                <div class="w-9 h-9 rounded-xl overflow-hidden shadow-sm flex-shrink-0">
+                    <img src="/icon-192.png" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 <div class="leading-tight">
                     <p class="font-bold text-gray-800 text-sm">Agenda de</p>
@@ -155,11 +151,8 @@
                     </svg>
                 </button>
                 <div class="flex items-center gap-2">
-                    <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center">
-                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
-                        </svg>
+                    <div class="w-6 h-6 rounded-lg overflow-hidden">
+                        <img src="/icon-192.png" alt="Logo" class="w-full h-full object-cover">
                     </div>
                     <span class="font-bold text-gray-800 text-sm">Agenda de Andrea Caprio</span>
                 </div>
