@@ -1,8 +1,4 @@
-<IfModule mod_mime.c>
-    AddType application/manifest+json .json
-    AddType image/png .png
-    AddType text/javascript .js
-</IfModule>
+AddType application/manifest+json .json
 
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
