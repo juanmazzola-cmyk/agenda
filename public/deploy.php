@@ -16,6 +16,9 @@ echo "=== DEPLOY ===\n";
 echo "\n-- git reset --hard HEAD --\n";
 echo shell_exec("cd " . escapeshellarg($base) . " && git reset --hard HEAD 2>&1");
 
+echo "\n-- git clean -fd --\n";
+echo shell_exec("cd " . escapeshellarg($base) . " && git clean -fd 2>&1");
+
 echo "\n-- git pull origin main --\n";
 echo shell_exec("cd " . escapeshellarg($base) . " && git pull origin main 2>&1");
 
