@@ -47,13 +47,13 @@
 
             {{-- Avatar --}}
             <div class="flex-shrink-0 w-11 h-11 rounded-full bg-rose-500 flex items-center justify-center shadow-sm">
-                <span class="text-white font-bold text-base">{{ mb_strtoupper(mb_substr($cliente->nombre, 0, 1)) }}</span>
+                <span class="text-white font-bold text-base">{{ mb_strtoupper(mb_substr($cliente->apellido, 0, 1)) }}</span>
             </div>
 
             {{-- Info --}}
             <div class="flex-1 min-w-0">
                 <p class="font-semibold text-gray-800 text-sm leading-tight">
-                    {{ $cliente->nombre }} {{ $cliente->apellido }}
+                    {{ $cliente->apellido }}, {{ $cliente->nombre }}
                 </p>
 
                 @if($cliente->proximoTurno)
