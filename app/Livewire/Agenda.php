@@ -48,7 +48,7 @@ class Agenda extends Component
             'tratamientoId' => 'required|exists:tratamientos,id',
             'fecha'         => 'required|date',
             'hora'          => 'required',
-            'valor'         => 'required|numeric|min:0',
+            'valor'         => 'nullable|numeric|min:0',
             'notas'         => 'nullable|string|max:500',
         ];
     }
@@ -60,7 +60,6 @@ class Agenda extends Component
             'tratamientoId.required' => 'Seleccioná un tratamiento.',
             'fecha.required'         => 'La fecha es obligatoria.',
             'hora.required'          => 'La hora es obligatoria.',
-            'valor.required'         => 'El valor es obligatorio.',
             'valor.numeric'          => 'El valor debe ser un número.',
             'valor.min'              => 'El valor no puede ser negativo.',
         ];
@@ -126,7 +125,7 @@ class Agenda extends Component
             'tratamiento_id' => (int) $this->tratamientoId,
             'fecha'          => $this->fecha,
             'hora'           => $this->hora,
-            'valor'          => (float) $this->valor,
+            'valor'          => $this->valor !== '' ? (float) $this->valor : null,
             'cobrado'        => $this->cobrado,
             'notas'          => $this->notas ?: null,
         ];

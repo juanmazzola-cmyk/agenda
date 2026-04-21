@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('tratamiento_id')->constrained('tratamientos')->cascadeOnDelete();
             $table->date('fecha');
             $table->time('hora');
-            $table->decimal('valor', 10, 2);
+            $table->decimal('valor', 10, 2)->nullable();
             $table->boolean('cobrado')->default(false);
             $table->text('notas')->nullable();
             $table->timestamps();
