@@ -1,8 +1,12 @@
 const db = new Dexie('AgendaAndrea');
 db.version(1).stores({
-    clientes:      '++id, nombre',
-    tratamientos:  '++id, nombre',
-    turnos:        '++id, fecha, clienteId, tratamientoId'
+    clientes: '++id, nombre', tratamientos: '++id, nombre',
+    turnos: '++id, fecha, clienteId, tratamientoId'
+});
+db.version(2).stores({
+    clientes: '++id, nombre', tratamientos: '++id, nombre',
+    turnos: '++id, fecha, clienteId, tratamientoId',
+    historial: '++id, clienteId, fecha'
 });
 
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -16,6 +20,7 @@ function agendaApp() {
         clientes: [],
         tratamientos: [],
         turnos: [],
+        historialAll: [],
 
         mesVista: new Date().getMonth(),
         anioVista: new Date().getFullYear(),
@@ -26,12 +31,31 @@ function agendaApp() {
         formTurno: {},
         formCliente: {},
         formTratamiento: {},
+
+        // Historial por cliente
+        historialClienteId: null,
+        historialItems: [],
+        mostrarFormHistorial: false,
+        formHistorial: {},
+
         busquedaClientes: '',
 
-        MESES,
-        DIAS,
+        resumenMes: new Date().getMonth(),
+        resumenAnio: new Date().getFullYear(),
+        estadisticasAnioSel: new Date().getFullYear(),
+
+        mensajeWA: localStorage.getItem('mensajeWA') ||
+            'Hola {nombre}! 👋 Te recuerdo tu turno el {fecha} a las {hora} ({tratamiento}). ¡Saludos, Andrea! 💕',
+
+        MESES, DIAS,
+
+        get aniosDisponibles() {
+            const a = new Date().getFullYear();
+            return [a-2, a-1, a, a+1].filter(x => x > 2020);
+        },
 
         async init() {
+            this.$watch('mensajeWA', val => localStorage.setItem('mensajeWA', val));
             await this.cargar();
         },
 
@@ -39,21 +63,18 @@ function agendaApp() {
             this.clientes     = await db.clientes.orderBy('nombre').toArray();
             this.tratamientos = await db.tratamientos.orderBy('nombre').toArray();
             this.turnos       = await db.turnos.toArray();
+            this.historialAll = await db.historial.orderBy('fecha').reverse().toArray();
         },
 
-        // ── Navegación ──────────────────────────────────────────────
-        ir(s) {
-            this.seccion = s;
-            this.menuAbierto = false;
-            this.diaSeleccionado = null;
-        },
+        // ── Navegación ───────────────────────────────────────────────
+        ir(s) { this.seccion = s; this.menuAbierto = false; this.diaSeleccionado = null; },
 
         get titulo() {
             return { agenda:'Agenda', clientes:'Clientes', tratamientos:'Tratamientos',
                      resumen:'Resumen', estadisticas:'Estadísticas', ajustes:'Ajustes' }[this.seccion] || '';
         },
 
-        // ── Calendario ──────────────────────────────────────────────
+        // ── Calendario ───────────────────────────────────────────────
         get nombreMesVista() { return `${MESES[this.mesVista]} ${this.anioVista}`; },
 
         get diasCalendario() {
@@ -91,47 +112,38 @@ function agendaApp() {
             this.diaSeleccionado = null;
         },
 
-        // ── Turnos ──────────────────────────────────────────────────
+        // ── Turnos ───────────────────────────────────────────────────
         abrirNuevoTurno(dia) {
             const fecha = dia ? this.fechaStr(this.anioVista, this.mesVista, dia) : '';
             this.formTurno = { fecha, hora: '09:00', clienteId: '', tratamientoId: '', notas: '', estado: 'pendiente' };
-            this.modoEdicion = false;
-            this.modalActivo = 'turno';
+            this.modoEdicion = false; this.modalActivo = 'turno';
         },
 
         editarTurno(t) {
-            this.formTurno = { ...t };
-            this.modoEdicion = true;
-            this.modalActivo = 'turno';
+            this.formTurno = { ...t }; this.modoEdicion = true; this.modalActivo = 'turno';
         },
 
         async guardarTurno() {
             if (!this.formTurno.fecha || !this.formTurno.hora || !this.formTurno.clienteId || !this.formTurno.tratamientoId) {
-                alert('Completá fecha, hora, cliente y tratamiento.');
-                return;
+                alert('Completá fecha, hora, cliente y tratamiento.'); return;
             }
             const d = {
                 fecha: this.formTurno.fecha, hora: this.formTurno.hora,
-                clienteId: Number(this.formTurno.clienteId), tratamientoId: Number(this.formTurno.tratamientoId),
-                notas: this.formTurno.notas || '', estado: this.formTurno.estado || 'pendiente',
+                clienteId: Number(this.formTurno.clienteId),
+                tratamientoId: Number(this.formTurno.tratamientoId),
+                notas: this.formTurno.notas || '',
+                estado: this.formTurno.estado || 'pendiente',
             };
             this.formTurno.id ? await db.turnos.update(this.formTurno.id, d) : await db.turnos.add(d);
-            await this.cargar();
-            this.cerrarModal();
+            await this.cargar(); this.cerrarModal();
         },
 
         async eliminarTurno(id) {
             if (!confirm('¿Eliminar este turno?')) return;
-            await db.turnos.delete(id);
-            await this.cargar();
+            await db.turnos.delete(id); await this.cargar();
         },
 
-        colorEstado(e) {
-            return { pendiente:'bg-yellow-100 text-yellow-700', confirmado:'bg-green-100 text-green-700',
-                     cancelado:'bg-red-100 text-red-600', completado:'bg-blue-100 text-blue-700' }[e] || 'bg-gray-100 text-gray-600';
-        },
-
-        // ── Clientes ────────────────────────────────────────────────
+        // ── Clientes ─────────────────────────────────────────────────
         get clientesFiltrados() {
             if (!this.busquedaClientes) return this.clientes;
             const q = this.busquedaClientes.toLowerCase();
@@ -142,20 +154,26 @@ function agendaApp() {
             );
         },
 
+        proximoTurnoDeCliente(clienteId) {
+            const hoy = new Date().toISOString().slice(0,10);
+            return this.turnos
+                .filter(t => t.clienteId === clienteId && t.fecha >= hoy)
+                .sort((a,b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))[0] || null;
+        },
+
         abrirNuevoCliente() {
-            this.formCliente = { nombre:'', apellido:'', telefono:'', email:'', notas:'' };
+            this.formCliente = { nombre:'', apellido:'', telefono:'', notas:'' };
             this.modoEdicion = false; this.modalActivo = 'cliente';
         },
 
         editarCliente(c) {
-            this.formCliente = { ...c };
-            this.modoEdicion = true; this.modalActivo = 'cliente';
+            this.formCliente = { ...c }; this.modoEdicion = true; this.modalActivo = 'cliente';
         },
 
         async guardarCliente() {
             if (!this.formCliente.nombre) { alert('El nombre es requerido.'); return; }
             const d = { nombre: this.formCliente.nombre, apellido: this.formCliente.apellido||'',
-                        telefono: this.formCliente.telefono||'', email: this.formCliente.email||'', notas: this.formCliente.notas||'' };
+                        telefono: this.formCliente.telefono||'', notas: this.formCliente.notas||'' };
             this.formCliente.id ? await db.clientes.update(this.formCliente.id, d) : await db.clientes.add(d);
             await this.cargar(); this.cerrarModal();
         },
@@ -163,25 +181,86 @@ function agendaApp() {
         async eliminarCliente(id) {
             if (this.turnos.some(t => t.clienteId === id)) { alert('Tiene turnos asignados. Eliminá los turnos primero.'); return; }
             if (!confirm('¿Eliminar esta cliente?')) return;
+            await db.historial.where('clienteId').equals(id).delete();
             await db.clientes.delete(id); await this.cargar();
         },
 
-        // ── Tratamientos ────────────────────────────────────────────
+        abrirWhatsApp(c) {
+            if (!c.telefono) { alert('Esta cliente no tiene teléfono registrado.'); return; }
+            const proximo = this.proximoTurnoDeCliente(c.id);
+            const msg = this.mensajeWA
+                .replace('{nombre}', c.nombre)
+                .replace('{fecha}', proximo ? this.formatFecha(proximo.fecha) : 'a confirmar')
+                .replace('{hora}', proximo ? proximo.hora : '')
+                .replace('{tratamiento}', proximo ? this.nombreTratamiento(proximo.tratamientoId) : '');
+            const tel = c.telefono.replace(/\D/g, '');
+            const num = tel.length === 10 ? '549' + tel : tel;
+            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank');
+        },
+
+        // ── Historial ────────────────────────────────────────────────
+        async verHistorial(clienteId) {
+            this.historialClienteId = clienteId;
+            await this.recargarHistorial();
+            this.mostrarFormHistorial = false;
+            this.formHistorial = { fecha: new Date().toISOString().slice(0,10), tratamientoId: '', nota: '', importe: 0 };
+            this.modalActivo = 'historial';
+        },
+
+        async recargarHistorial() {
+            this.historialItems = await db.historial
+                .where('clienteId').equals(this.historialClienteId)
+                .reverse().sortBy('fecha');
+        },
+
+        get clienteHistorialActual() {
+            return this.clientes.find(c => c.id === this.historialClienteId) || null;
+        },
+
+        get historialTotal() {
+            return this.historialItems.reduce((s, h) => s + Number(h.importe||0), 0);
+        },
+
+        abrirFormHistorial() {
+            this.formHistorial = { fecha: new Date().toISOString().slice(0,10), tratamientoId: '', nota: '', importe: 0 };
+            this.mostrarFormHistorial = true;
+        },
+
+        async guardarHistorial() {
+            if (!this.formHistorial.fecha) { alert('Ingresá la fecha.'); return; }
+            const d = {
+                clienteId: this.historialClienteId,
+                fecha: this.formHistorial.fecha,
+                tratamientoId: this.formHistorial.tratamientoId ? Number(this.formHistorial.tratamientoId) : null,
+                nota: this.formHistorial.nota || '',
+                importe: Number(this.formHistorial.importe) || 0,
+            };
+            await db.historial.add(d);
+            await this.recargarHistorial();
+            await this.cargar();
+            this.mostrarFormHistorial = false;
+        },
+
+        async eliminarHistorial(id) {
+            if (!confirm('¿Eliminar esta entrada del historial?')) return;
+            await db.historial.delete(id);
+            await this.recargarHistorial();
+            await this.cargar();
+        },
+
+        // ── Tratamientos ─────────────────────────────────────────────
         abrirNuevoTratamiento() {
-            this.formTratamiento = { nombre:'', duracion:60, precio:0 };
+            this.formTratamiento = { nombre:'' };
             this.modoEdicion = false; this.modalActivo = 'tratamiento';
         },
 
         editarTratamiento(t) {
-            this.formTratamiento = { ...t };
-            this.modoEdicion = true; this.modalActivo = 'tratamiento';
+            this.formTratamiento = { ...t }; this.modoEdicion = true; this.modalActivo = 'tratamiento';
         },
 
         async guardarTratamiento() {
             if (!this.formTratamiento.nombre) { alert('El nombre es requerido.'); return; }
-            const d = { nombre: this.formTratamiento.nombre,
-                        duracion: Number(this.formTratamiento.duracion)||60,
-                        precio: Number(this.formTratamiento.precio)||0 };
+            const d = { nombre: this.formTratamiento.nombre };
             this.formTratamiento.id ? await db.tratamientos.update(this.formTratamiento.id, d) : await db.tratamientos.add(d);
             await this.cargar(); this.cerrarModal();
         },
@@ -192,7 +271,7 @@ function agendaApp() {
             await db.tratamientos.delete(id); await this.cargar();
         },
 
-        // ── Helpers ─────────────────────────────────────────────────
+        // ── Helpers ──────────────────────────────────────────────────
         nombreCliente(id) {
             const c = this.clientes.find(c => c.id === id);
             return c ? `${c.nombre}${c.apellido ? ' '+c.apellido : ''}` : '—';
@@ -203,11 +282,6 @@ function agendaApp() {
             return t ? t.nombre : '—';
         },
 
-        precioTratamiento(id) {
-            const t = this.tratamientos.find(t => t.id === id);
-            return t ? Number(t.precio) : 0;
-        },
-
         formatFecha(f) {
             if (!f) return '';
             const [y,m,d] = f.split('-');
@@ -216,77 +290,72 @@ function agendaApp() {
 
         formatPrecio(n) { return '$' + Number(n||0).toLocaleString('es-AR'); },
 
-        cerrarModal() { this.modalActivo = null; },
+        cerrarModal() { this.modalActivo = null; this.historialClienteId = null; },
 
-        // ── Resumen ─────────────────────────────────────────────────
-        get resumenMes() {
-            const h = new Date();
-            const pref = `${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}`;
-            const ts = this.turnos.filter(t => t.fecha.startsWith(pref) && t.estado !== 'cancelado');
-            let ingresos = 0;
-            ts.forEach(t => { ingresos += this.precioTratamiento(t.tratamientoId); });
-            return { mes: MESES[h.getMonth()], total: ts.length, ingresos, clientes: new Set(ts.map(t => t.clienteId)).size };
+        // ── Resumen ──────────────────────────────────────────────────
+        get resumenDatos() {
+            const pref = `${this.resumenAnio}-${String(this.resumenMes+1).padStart(2,'0')}`;
+            const entradas = this.historialAll.filter(h => h.fecha.startsWith(pref));
+            const totalIngresos = entradas.reduce((s, h) => s + Number(h.importe||0), 0);
+
+            // Agrupado por tratamiento
+            const grupos = {};
+            entradas.forEach(h => {
+                const key = h.tratamientoId || '__sin__';
+                if (!grupos[key]) grupos[key] = { nombre: h.tratamientoId ? this.nombreTratamiento(h.tratamientoId) : 'Sin tratamiento', count: 0, total: 0 };
+                grupos[key].count++;
+                grupos[key].total += Number(h.importe||0);
+            });
+
+            return {
+                total: entradas.length,
+                ingresos: totalIngresos,
+                clientesUnicos: new Set(entradas.map(h => h.clienteId)).size,
+                porTratamiento: Object.values(grupos).sort((a,b) => b.total - a.total),
+            };
         },
 
-        get proximosTurnos() {
-            const hoy = new Date().toISOString().slice(0,10);
-            return this.turnos
-                .filter(t => t.fecha >= hoy && t.estado !== 'cancelado')
-                .sort((a,b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))
-                .slice(0, 6);
-        },
-
-        // ── Estadísticas ────────────────────────────────────────────
-        get estadisticasAnio() {
-            const anio = new Date().getFullYear();
+        // ── Estadísticas ─────────────────────────────────────────────
+        get estadisticasMensuales() {
             return Array.from({ length: 12 }, (_, i) => {
-                const pref = `${anio}-${String(i+1).padStart(2,'0')}`;
-                const ts = this.turnos.filter(t => t.fecha.startsWith(pref) && t.estado !== 'cancelado');
-                let ingresos = 0;
-                ts.forEach(t => { ingresos += this.precioTratamiento(t.tratamientoId); });
-                return { mes: MESES[i].slice(0,3), total: ts.length, ingresos };
+                const pref = `${this.estadisticasAnioSel}-${String(i+1).padStart(2,'0')}`;
+                const hs = this.historialAll.filter(h => h.fecha.startsWith(pref));
+                const ingresos = hs.reduce((s,h) => s + Number(h.importe||0), 0);
+                return { mes: MESES[i].slice(0,3), total: hs.length, ingresos };
             });
         },
 
-        get maxTurnosAnio() {
-            return Math.max(1, ...this.estadisticasAnio.map(e => e.total));
+        get maxEstadisticas() {
+            return Math.max(1, ...this.estadisticasMensuales.map(e => e.total));
         },
 
-        // ── Backup ──────────────────────────────────────────────────
+        // ── Backup ───────────────────────────────────────────────────
         async exportar() {
-            const datos = { version:1, exportado: new Date().toISOString(),
-                            clientes: this.clientes, tratamientos: this.tratamientos, turnos: this.turnos };
+            const datos = { version:2, exportado: new Date().toISOString(),
+                            clientes: this.clientes, tratamientos: this.tratamientos,
+                            turnos: this.turnos, historial: this.historialAll };
             const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
             const url  = URL.createObjectURL(blob);
             const a    = document.createElement('a');
-            a.href = url;
-            a.download = `agenda-backup-${new Date().toISOString().slice(0,10)}.json`;
-            document.body.appendChild(a); a.click();
-            document.body.removeChild(a); URL.revokeObjectURL(url);
+            a.href = url; a.download = `agenda-backup-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         },
 
         async importar(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+            const file = e.target.files[0]; if (!file) return;
             try {
                 const datos = JSON.parse(await file.text());
                 if (!confirm('Esto reemplazará TODOS los datos actuales. ¿Continuar?')) return;
-                await db.transaction('rw', db.clientes, db.tratamientos, db.turnos, async () => {
-                    await db.clientes.clear();
-                    await db.tratamientos.clear();
-                    await db.turnos.clear();
-                    if (datos.clientes?.length)
-                        await db.clientes.bulkAdd(datos.clientes.map(({id,...c}) => c));
-                    if (datos.tratamientos?.length)
-                        await db.tratamientos.bulkAdd(datos.tratamientos.map(({id,...t}) => t));
-                    if (datos.turnos?.length)
-                        await db.turnos.bulkAdd(datos.turnos.map(({id,...t}) => t));
+                await db.transaction('rw', db.clientes, db.tratamientos, db.turnos, db.historial, async () => {
+                    await db.clientes.clear(); await db.tratamientos.clear();
+                    await db.turnos.clear(); await db.historial.clear();
+                    if (datos.clientes?.length)     await db.clientes.bulkAdd(datos.clientes.map(({id,...c}) => c));
+                    if (datos.tratamientos?.length) await db.tratamientos.bulkAdd(datos.tratamientos.map(({id,...t}) => t));
+                    if (datos.turnos?.length)       await db.turnos.bulkAdd(datos.turnos.map(({id,...t}) => t));
+                    if (datos.historial?.length)    await db.historial.bulkAdd(datos.historial.map(({id,...h}) => h));
                 });
-                await this.cargar();
-                alert('Datos importados correctamente.');
-            } catch(err) {
-                alert('Error al importar: ' + err.message);
-            }
+                await this.cargar(); alert('Datos importados correctamente.');
+            } catch(err) { alert('Error al importar: ' + err.message); }
             e.target.value = '';
         },
     };

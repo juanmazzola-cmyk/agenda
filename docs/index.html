@@ -16,9 +16,10 @@
     <script src="./app.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
     <style>
-        [x-cloak] { display: none !important; }
-        * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: system-ui, -apple-system, sans-serif; }
+        [x-cloak]{display:none!important}
+        *{-webkit-tap-highlight-color:transparent}
+        body{font-family:system-ui,-apple-system,sans-serif}
+        select,input,textarea{-webkit-appearance:none}
     </style>
 </head>
 <body class="bg-pink-50/40 min-h-screen" x-data="agendaApp()" x-cloak>
@@ -30,62 +31,56 @@
      x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-150"
      x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
 
-<!-- ═══ SIDEBAR ═══ -->
-<aside :class="menuAbierto ? 'translate-x-0' : '-translate-x-full'"
+<!-- ══ SIDEBAR ══ -->
+<aside :class="menuAbierto?'translate-x-0':'-translate-x-full'"
        class="fixed inset-y-0 left-0 z-30 w-60 bg-white border-r border-pink-100 flex flex-col transition-transform duration-300 lg:translate-x-0">
-    <div class="px-5 py-5 border-b border-pink-100">
-        <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-sm flex-shrink-0">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
-                </svg>
-            </div>
-            <div class="leading-tight">
-                <p class="font-bold text-gray-800 text-sm">Agenda de</p>
-                <p class="text-xs text-pink-400 font-medium">Andrea Caprio</p>
-            </div>
+    <div class="px-5 py-5 border-b border-pink-100 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow-sm flex-shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+            </svg>
+        </div>
+        <div class="leading-tight">
+            <p class="font-bold text-gray-800 text-sm">Agenda de</p>
+            <p class="text-xs text-pink-400 font-medium">Andrea Caprio</p>
         </div>
     </div>
     <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        <template x-for="item in [
-            {s:'agenda',       label:'Agenda',         icon:'calendar'},
-            {s:'clientes',     label:'Clientes',       icon:'users'},
-            {s:'tratamientos', label:'Tratamientos',   icon:'sparkles'}
-        ]" :key="item.s">
-            <a @click="ir(item.s)" :class="seccion===item.s ? 'bg-pink-50 text-pink-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
-               class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all">
-                <!-- calendar -->
-                <template x-if="item.icon==='calendar'">
-                    <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
-                    </svg>
-                </template>
-                <!-- users -->
-                <template x-if="item.icon==='users'">
-                    <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
-                    </svg>
-                </template>
-                <!-- sparkles -->
-                <template x-if="item.icon==='sparkles'">
-                    <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"/>
-                    </svg>
-                </template>
-                <span x-text="item.label"></span>
-            </a>
-        </template>
+        <!-- Agenda -->
+        <a @click="ir('agenda')" :class="seccion==='agenda'?'bg-pink-50 text-pink-600':'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
+           class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all">
+            <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+            </svg>
+            Agenda
+        </a>
+        <!-- Clientes -->
+        <a @click="ir('clientes')" :class="seccion==='clientes'?'bg-pink-50 text-pink-600':'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
+           class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all">
+            <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+            </svg>
+            Clientes
+        </a>
+        <!-- Tratamientos -->
+        <a @click="ir('tratamientos')" :class="seccion==='tratamientos'?'bg-pink-50 text-pink-600':'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
+           class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all">
+            <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+            </svg>
+            Tratamientos
+        </a>
 
         <div class="pt-3 pb-1 px-3"><p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Reportes</p></div>
 
-        <a @click="ir('resumen')" :class="seccion==='resumen' ? 'bg-pink-50 text-pink-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
+        <a @click="ir('resumen')" :class="seccion==='resumen'?'bg-pink-50 text-pink-600':'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
            class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all">
             <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
             </svg>
             Resumen
         </a>
-        <a @click="ir('estadisticas')" :class="seccion==='estadisticas' ? 'bg-pink-50 text-pink-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
+        <a @click="ir('estadisticas')" :class="seccion==='estadisticas'?'bg-pink-50 text-pink-600':'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
            class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all">
             <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"/>
@@ -94,7 +89,7 @@
         </a>
 
         <div class="pt-3 pb-1 px-3"><p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Sistema</p></div>
-        <a @click="ir('ajustes')" :class="seccion==='ajustes' ? 'bg-pink-50 text-pink-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
+        <a @click="ir('ajustes')" :class="seccion==='ajustes'?'bg-pink-50 text-pink-600':'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
            class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all">
             <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z"/>
@@ -108,9 +103,8 @@
     </div>
 </aside>
 
-<!-- ═══ CONTENIDO ═══ -->
+<!-- ══ CONTENIDO ══ -->
 <div class="lg:pl-60 min-h-screen flex flex-col">
-
     <!-- Top bar mobile -->
     <header class="lg:hidden sticky top-0 z-10 bg-white border-b border-pink-100 shadow-sm">
         <div class="flex items-center gap-3 px-4 py-3">
@@ -132,14 +126,14 @@
 
     <main class="flex-1 p-4 sm:p-6">
 
-        <!-- ═══ AGENDA ═══ -->
+        <!-- ══ AGENDA ══ -->
         <div x-show="seccion==='agenda'">
             <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1">
                     <button @click="mesAnterior()" class="p-2 rounded-lg hover:bg-pink-50 text-gray-500 hover:text-pink-600 transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
                     </button>
-                    <h2 class="text-base font-bold text-gray-800 w-44 text-center" x-text="nombreMesVista"></h2>
+                    <h2 class="text-sm font-bold text-gray-800 w-40 text-center" x-text="nombreMesVista"></h2>
                     <button @click="mesSiguiente()" class="p-2 rounded-lg hover:bg-pink-50 text-gray-500 hover:text-pink-600 transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
                     </button>
@@ -150,14 +144,14 @@
                 </button>
             </div>
 
-            <!-- Cabecera días -->
+            <!-- Días semana -->
             <div class="grid grid-cols-7 mb-1">
                 <template x-for="d in DIAS" :key="d">
                     <div class="text-center text-[11px] font-semibold text-gray-400 py-1" x-text="d"></div>
                 </template>
             </div>
 
-            <!-- Grilla del mes -->
+            <!-- Grilla -->
             <div class="grid grid-cols-7 gap-0.5">
                 <template x-for="(dia, idx) in diasCalendario" :key="idx">
                     <div @click="dia && (diaSeleccionado = diaSeleccionado===dia ? null : dia)"
@@ -171,54 +165,54 @@
                         <span class="text-xs font-semibold leading-none mb-1" x-text="dia"></span>
                         <div class="flex flex-wrap justify-center gap-0.5">
                             <template x-for="t in turnosDia(dia).slice(0,3)" :key="t.id">
-                                <span :class="diaSeleccionado===dia ? 'bg-white/40' : 'bg-pink-400'"
-                                      class="w-1.5 h-1.5 rounded-full block"></span>
+                                <span :class="diaSeleccionado===dia?'bg-white/40':'bg-pink-400'" class="w-1.5 h-1.5 rounded-full block"></span>
                             </template>
                             <template x-if="turnosDia(dia).length > 3">
-                                <span :class="diaSeleccionado===dia ? 'text-white/80' : 'text-pink-400'"
-                                      class="text-[9px] font-bold leading-none" x-text="'+' + (turnosDia(dia).length - 3)"></span>
+                                <span :class="diaSeleccionado===dia?'text-white/80':'text-pink-400'" class="text-[9px] font-bold" x-text="'+' + (turnosDia(dia).length - 3)"></span>
                             </template>
                         </div>
                     </div>
                 </template>
             </div>
 
-            <!-- Panel del día seleccionado -->
+            <!-- Panel día -->
             <div x-show="diaSeleccionado !== null" x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
-                 class="mt-4">
+                 x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="mt-4">
                 <div class="flex items-center justify-between mb-3">
-                    <h3 class="font-bold text-gray-800"
-                        x-text="`${diaSeleccionado} de ${MESES[mesVista]}`"></h3>
-                    <button @click="abrirNuevoTurno(diaSeleccionado)"
-                            class="flex items-center gap-1 text-pink-600 hover:text-pink-700 text-sm font-medium">
+                    <h3 class="font-bold text-gray-800" x-text="`${diaSeleccionado} de ${MESES[mesVista]}`"></h3>
+                    <button @click="abrirNuevoTurno(diaSeleccionado)" class="flex items-center gap-1 text-pink-600 hover:text-pink-700 text-sm font-medium">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-                        Agregar turno
+                        Agregar
                     </button>
                 </div>
-
-                <div x-show="turnosDia(diaSeleccionado).length === 0"
-                     class="text-center py-8 text-gray-400 text-sm bg-white rounded-2xl">
+                <div x-show="turnosDia(diaSeleccionado).length===0" class="text-center py-8 text-gray-400 text-sm bg-white rounded-2xl">
                     Sin turnos este día
                 </div>
-
                 <div class="space-y-2">
                     <template x-for="t in turnosDia(diaSeleccionado)" :key="t.id">
-                        <div class="bg-white rounded-2xl p-3.5 shadow-sm flex items-start justify-between gap-3">
-                            <div class="flex items-start gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-pink-50 flex items-center justify-center flex-shrink-0">
+                        <div class="bg-white rounded-2xl p-3.5 shadow-sm flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-pink-50 flex items-center justify-center flex-shrink-0">
                                     <span class="text-pink-600 font-bold text-xs" x-text="t.hora"></span>
                                 </div>
                                 <div>
                                     <p class="font-semibold text-gray-800 text-sm" x-text="nombreCliente(t.clienteId)"></p>
                                     <p class="text-xs text-gray-500" x-text="nombreTratamiento(t.tratamientoId)"></p>
-                                    <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium"
-                                          :class="colorEstado(t.estado)" x-text="t.estado"></span>
+                                    <span x-show="t.estado==='pagado'" class="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-100 text-green-700">pagado</span>
                                 </div>
                             </div>
                             <div class="flex gap-1 flex-shrink-0">
+                                <!-- WA -->
+                                <button @click="abrirWhatsApp(clientes.find(c=>c.id===t.clienteId)||{})"
+                                        class="p-1.5 rounded-lg text-gray-400 hover:text-green-500 hover:bg-green-50 transition"
+                                        title="WhatsApp">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                                        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.114.549 4.099 1.51 5.827L0 24l6.335-1.652A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.869 9.869 0 01-5.031-1.378l-.361-.214-3.741.975.999-3.648-.235-.374A9.855 9.855 0 012.118 12C2.118 6.538 6.538 2.118 12 2.118S21.882 6.538 21.882 12 17.462 21.882 12 21.882z"/>
+                                    </svg>
+                                </button>
                                 <button @click="editarTurno(t)" class="p-1.5 rounded-lg text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
                                 </button>
                                 <button @click="eliminarTurno(t.id)" class="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
@@ -230,12 +224,10 @@
             </div>
         </div>
 
-        <!-- ═══ CLIENTES ═══ -->
+        <!-- ══ CLIENTES ══ -->
         <div x-show="seccion==='clientes'">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold text-gray-800">Clientes
-                    <span class="text-sm font-normal text-gray-400 ml-1" x-text="'('+clientes.length+')'"></span>
-                </h2>
+                <h2 class="text-lg font-bold text-gray-800">Clientes <span class="text-sm font-normal text-gray-400" x-text="'('+clientes.length+')'"></span></h2>
                 <button @click="abrirNuevoCliente()" class="flex items-center gap-1.5 bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium px-3 py-2 rounded-xl transition shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                     Nueva
@@ -248,64 +240,74 @@
                 <input x-model="busquedaClientes" type="text" placeholder="Buscar cliente..."
                        class="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
             </div>
-            <div x-show="clientesFiltrados.length === 0" class="text-center py-12 text-gray-400 text-sm">
-                <p>Sin clientes todavía</p>
-                <p class="text-xs mt-1">Tocá "Nueva" para agregar</p>
+            <div x-show="clientesFiltrados.length===0" class="text-center py-12 text-gray-400 text-sm">
+                Sin clientes todavía
             </div>
             <div class="space-y-2">
                 <template x-for="c in clientesFiltrados" :key="c.id">
-                    <div class="bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-pink-100 flex items-center justify-center flex-shrink-0">
-                                <span class="text-pink-600 font-bold text-sm" x-text="c.nombre.charAt(0).toUpperCase()"></span>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-3 flex-1 min-w-0">
+                                <div class="w-10 h-10 rounded-xl bg-pink-100 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-pink-600 font-bold text-sm" x-text="c.nombre.charAt(0).toUpperCase()"></span>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-semibold text-gray-800 text-sm truncate" x-text="`${c.nombre} ${c.apellido||''}`"></p>
+                                    <p class="text-xs text-gray-400" x-text="c.telefono||'Sin teléfono'"></p>
+                                    <!-- Próximo turno -->
+                                    <template x-if="proximoTurnoDeCliente(c.id)">
+                                        <p class="text-[11px] text-pink-500 font-medium mt-0.5"
+                                           x-text="'📅 ' + formatFecha(proximoTurnoDeCliente(c.id).fecha) + ' · ' + proximoTurnoDeCliente(c.id).hora"></p>
+                                    </template>
+                                </div>
                             </div>
-                            <div>
-                                <p class="font-semibold text-gray-800 text-sm" x-text="`${c.nombre} ${c.apellido||''}`"></p>
-                                <p class="text-xs text-gray-400" x-text="c.telefono || 'Sin teléfono'"></p>
+                            <!-- Iconos de acción -->
+                            <div class="flex gap-1 flex-shrink-0">
+                                <!-- WhatsApp -->
+                                <button @click="abrirWhatsApp(c)" class="p-1.5 rounded-lg text-gray-400 hover:text-green-500 hover:bg-green-50 transition" title="WhatsApp">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                                        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.114.549 4.099 1.51 5.827L0 24l6.335-1.652A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.869 9.869 0 01-5.031-1.378l-.361-.214-3.741.975.999-3.648-.235-.374A9.855 9.855 0 012.118 12C2.118 6.538 6.538 2.118 12 2.118S21.882 6.538 21.882 12 17.462 21.882 12 21.882z"/>
+                                    </svg>
+                                </button>
+                                <!-- Historial -->
+                                <button @click="verHistorial(c.id)" class="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition" title="Historial">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                                    </svg>
+                                </button>
+                                <!-- Editar -->
+                                <button @click="editarCliente(c)" class="p-1.5 rounded-lg text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
+                                </button>
+                                <!-- Eliminar -->
+                                <button @click="eliminarCliente(c.id)" class="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                                </button>
                             </div>
-                        </div>
-                        <div class="flex gap-1">
-                            <button @click="editarCliente(c)" class="p-1.5 rounded-lg text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
-                            </button>
-                            <button @click="eliminarCliente(c.id)" class="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
-                            </button>
                         </div>
                     </div>
                 </template>
             </div>
         </div>
 
-        <!-- ═══ TRATAMIENTOS ═══ -->
+        <!-- ══ TRATAMIENTOS ══ -->
         <div x-show="seccion==='tratamientos'">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold text-gray-800">Tratamientos
-                    <span class="text-sm font-normal text-gray-400 ml-1" x-text="'('+tratamientos.length+')'"></span>
-                </h2>
+                <h2 class="text-lg font-bold text-gray-800">Tratamientos <span class="text-sm font-normal text-gray-400" x-text="'('+tratamientos.length+')'"></span></h2>
                 <button @click="abrirNuevoTratamiento()" class="flex items-center gap-1.5 bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium px-3 py-2 rounded-xl transition shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                     Nuevo
                 </button>
             </div>
-            <div x-show="tratamientos.length === 0" class="text-center py-12 text-gray-400 text-sm">
-                <p>Sin tratamientos todavía</p>
-                <p class="text-xs mt-1">Tocá "Nuevo" para agregar</p>
-            </div>
+            <div x-show="tratamientos.length===0" class="text-center py-12 text-gray-400 text-sm">Sin tratamientos todavía</div>
             <div class="space-y-2">
                 <template x-for="t in tratamientos" :key="t.id">
-                    <div class="bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between gap-3">
-                        <div>
-                            <p class="font-semibold text-gray-800 text-sm" x-text="t.nombre"></p>
-                            <p class="text-xs text-gray-400 mt-0.5">
-                                <span x-text="t.duracion + ' min'"></span>
-                                <span class="mx-1.5">·</span>
-                                <span class="text-green-600 font-medium" x-text="formatPrecio(t.precio)"></span>
-                            </p>
-                        </div>
+                    <div class="bg-white rounded-2xl px-4 py-3.5 shadow-sm flex items-center justify-between">
+                        <p class="font-semibold text-gray-800 text-sm" x-text="t.nombre"></p>
                         <div class="flex gap-1">
                             <button @click="editarTratamiento(t)" class="p-1.5 rounded-lg text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
                             </button>
                             <button @click="eliminarTratamiento(t.id)" class="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
@@ -316,89 +318,125 @@
             </div>
         </div>
 
-        <!-- ═══ RESUMEN ═══ -->
+        <!-- ══ RESUMEN ══ -->
         <div x-show="seccion==='resumen'">
-            <h2 class="text-lg font-bold text-gray-800 mb-4">Resumen de <span x-text="resumenMes.mes"></span></h2>
-            <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="flex items-center gap-2 mb-4 flex-wrap">
+                <h2 class="text-lg font-bold text-gray-800 mr-auto">Resumen</h2>
+                <select x-model.number="resumenMes" class="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white">
+                    <template x-for="(m, i) in MESES" :key="i">
+                        <option :value="i" x-text="m"></option>
+                    </template>
+                </select>
+                <select x-model.number="resumenAnio" class="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white">
+                    <template x-for="a in aniosDisponibles" :key="a">
+                        <option :value="a" x-text="a"></option>
+                    </template>
+                </select>
+            </div>
+
+            <!-- Totales -->
+            <div class="grid grid-cols-3 gap-3 mb-5">
                 <div class="bg-white rounded-2xl p-4 shadow-sm text-center">
-                    <p class="text-2xl font-bold text-pink-600" x-text="resumenMes.total"></p>
-                    <p class="text-xs text-gray-500 mt-1">Turnos</p>
+                    <p class="text-2xl font-bold text-pink-600" x-text="resumenDatos.total"></p>
+                    <p class="text-xs text-gray-500 mt-1">Sesiones</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 shadow-sm text-center">
-                    <p class="text-2xl font-bold text-green-600" x-text="formatPrecio(resumenMes.ingresos)"></p>
+                    <p class="text-xl font-bold text-green-600" x-text="formatPrecio(resumenDatos.ingresos)"></p>
                     <p class="text-xs text-gray-500 mt-1">Ingresos</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 shadow-sm text-center">
-                    <p class="text-2xl font-bold text-blue-500" x-text="resumenMes.clientes"></p>
+                    <p class="text-2xl font-bold text-blue-500" x-text="resumenDatos.clientesUnicos"></p>
                     <p class="text-xs text-gray-500 mt-1">Clientas</p>
                 </div>
             </div>
-            <h3 class="font-bold text-gray-700 mb-3 text-sm">Próximos turnos</h3>
-            <div x-show="proximosTurnos.length === 0" class="text-center py-8 text-gray-400 text-sm bg-white rounded-2xl">
-                Sin turnos próximos
+
+            <!-- Por tratamiento -->
+            <h3 class="font-bold text-gray-700 text-sm mb-2">Por tratamiento</h3>
+            <div x-show="resumenDatos.porTratamiento.length===0" class="text-center py-8 text-gray-400 text-sm bg-white rounded-2xl">
+                Sin registros en este período
             </div>
-            <div class="space-y-2">
-                <template x-for="t in proximosTurnos" :key="t.id">
-                    <div class="bg-white rounded-2xl p-3.5 shadow-sm flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-pink-50 flex flex-col items-center justify-center flex-shrink-0">
-                            <span class="text-pink-600 font-bold text-[10px] leading-none" x-text="t.fecha.slice(8,10)+'/'+t.fecha.slice(5,7)"></span>
-                            <span class="text-pink-400 text-[9px]" x-text="t.hora"></span>
-                        </div>
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <template x-for="(r, i) in resumenDatos.porTratamiento" :key="i">
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-50 last:border-0">
                         <div>
-                            <p class="font-semibold text-gray-800 text-sm" x-text="nombreCliente(t.clienteId)"></p>
-                            <p class="text-xs text-gray-400" x-text="nombreTratamiento(t.tratamientoId)"></p>
+                            <p class="text-sm font-semibold text-gray-800" x-text="r.nombre"></p>
+                            <p class="text-xs text-gray-400" x-text="r.count + ' sesión' + (r.count!==1?'es':'')"></p>
                         </div>
+                        <p class="text-sm font-bold text-green-600" x-text="formatPrecio(r.total)"></p>
                     </div>
                 </template>
             </div>
         </div>
 
-        <!-- ═══ ESTADÍSTICAS ═══ -->
+        <!-- ══ ESTADÍSTICAS ══ -->
         <div x-show="seccion==='estadisticas'">
-            <h2 class="text-lg font-bold text-gray-800 mb-4">Estadísticas <span class="text-sm font-normal text-gray-400" x-text="new Date().getFullYear()"></span></h2>
+            <div class="flex items-center gap-3 mb-4 flex-wrap">
+                <h2 class="text-lg font-bold text-gray-800 mr-auto">Estadísticas</h2>
+                <select x-model.number="estadisticasAnioSel" class="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white">
+                    <template x-for="a in aniosDisponibles" :key="a">
+                        <option :value="a" x-text="a"></option>
+                    </template>
+                </select>
+            </div>
             <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-                <template x-for="(e, i) in estadisticasAnio" :key="i">
+                <template x-for="(e, i) in estadisticasMensuales" :key="i">
                     <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0">
-                        <span class="w-8 text-xs font-semibold text-gray-500" x-text="e.mes"></span>
+                        <span class="w-8 text-xs font-semibold text-gray-500 flex-shrink-0" x-text="e.mes"></span>
                         <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                             <div class="h-full bg-pink-400 rounded-full transition-all duration-500"
-                                 :style="`width:${maxTurnosAnio > 0 ? (e.total/maxTurnosAnio*100) : 0}%`"></div>
+                                 :style="`width:${maxEstadisticas>0?(e.total/maxEstadisticas*100):0}%`"></div>
                         </div>
-                        <span class="w-5 text-xs font-bold text-gray-700 text-right" x-text="e.total"></span>
-                        <span class="w-20 text-xs text-green-600 font-medium text-right" x-text="formatPrecio(e.ingresos)"></span>
+                        <span class="w-5 text-xs font-bold text-gray-700 text-right flex-shrink-0" x-text="e.total"></span>
+                        <span class="w-20 text-xs text-green-600 font-medium text-right flex-shrink-0" x-text="formatPrecio(e.ingresos)"></span>
                     </div>
                 </template>
             </div>
         </div>
 
-        <!-- ═══ AJUSTES ═══ -->
+        <!-- ══ AJUSTES ══ -->
         <div x-show="seccion==='ajustes'">
             <h2 class="text-lg font-bold text-gray-800 mb-4">Ajustes</h2>
             <div class="space-y-3">
+                <!-- Mensaje WA -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm">
+                    <div class="flex items-center gap-2 mb-1">
+                        <svg class="w-4 h-4 text-green-500" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.114.549 4.099 1.51 5.827L0 24l6.335-1.652A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.869 9.869 0 01-5.031-1.378l-.361-.214-3.741.975.999-3.648-.235-.374A9.855 9.855 0 012.118 12C2.118 6.538 6.538 2.118 12 2.118S21.882 6.538 21.882 12 17.462 21.882 12 21.882z"/>
+                        </svg>
+                        <h3 class="font-semibold text-gray-700 text-sm">Mensaje de WhatsApp</h3>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-2">Variables: <code class="bg-gray-100 px-1 rounded">{nombre}</code> <code class="bg-gray-100 px-1 rounded">{fecha}</code> <code class="bg-gray-100 px-1 rounded">{hora}</code> <code class="bg-gray-100 px-1 rounded">{tratamiento}</code></p>
+                    <textarea x-model="mensajeWA" rows="4"
+                              class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 resize-none"
+                              placeholder="Escribí el mensaje que se enviará..."></textarea>
+                    <p class="text-[11px] text-gray-400 mt-1">Se guarda automáticamente</p>
+                </div>
+                <!-- Exportar -->
                 <div class="bg-white rounded-2xl p-4 shadow-sm">
                     <h3 class="font-semibold text-gray-700 text-sm mb-1">Exportar datos</h3>
-                    <p class="text-xs text-gray-400 mb-3">Descargá una copia de seguridad de todos tus datos.</p>
+                    <p class="text-xs text-gray-400 mb-3">Descargá una copia de seguridad de todos los datos.</p>
                     <button @click="exportar()" class="w-full bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium py-2.5 rounded-xl transition">
                         Exportar backup (JSON)
                     </button>
                 </div>
+                <!-- Importar -->
                 <div class="bg-white rounded-2xl p-4 shadow-sm">
                     <h3 class="font-semibold text-gray-700 text-sm mb-1">Importar datos</h3>
-                    <p class="text-xs text-gray-400 mb-3">Restaurar desde un backup anterior. Reemplaza todos los datos actuales.</p>
+                    <p class="text-xs text-gray-400 mb-3">Restaurar desde un backup. Reemplaza todos los datos actuales.</p>
                     <label class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-2.5 rounded-xl text-center cursor-pointer transition">
                         Seleccionar archivo...
                         <input type="file" accept=".json" class="hidden" @change="importar($event)">
                     </label>
                 </div>
-                <div class="bg-white rounded-2xl p-4 shadow-sm">
-                    <h3 class="font-semibold text-gray-700 text-sm mb-2">Información</h3>
-                    <div class="space-y-1 text-xs text-gray-500">
-                        <p><span class="font-medium text-gray-700">Versión:</span> 2.0</p>
-                        <p><span class="font-medium text-gray-700">Clientes:</span> <span x-text="clientes.length"></span></p>
-                        <p><span class="font-medium text-gray-700">Tratamientos:</span> <span x-text="tratamientos.length"></span></p>
-                        <p><span class="font-medium text-gray-700">Turnos totales:</span> <span x-text="turnos.length"></span></p>
-                        <p class="text-gray-400 mt-2">Datos guardados en el celular (IndexedDB)</p>
-                    </div>
+                <!-- Info -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm text-xs text-gray-500 space-y-1">
+                    <p><span class="font-medium text-gray-700">Versión:</span> 2.0</p>
+                    <p><span class="font-medium text-gray-700">Clientes:</span> <span x-text="clientes.length"></span></p>
+                    <p><span class="font-medium text-gray-700">Tratamientos:</span> <span x-text="tratamientos.length"></span></p>
+                    <p><span class="font-medium text-gray-700">Turnos:</span> <span x-text="turnos.length"></span></p>
+                    <p><span class="font-medium text-gray-700">Entradas historial:</span> <span x-text="historialAll.length"></span></p>
+                    <p class="text-gray-400 pt-1">Datos guardados localmente en el celular</p>
                 </div>
             </div>
         </div>
@@ -406,54 +444,39 @@
     </main>
 </div>
 
-<!-- ═══ MODAL TURNO ═══ -->
+<!-- ══ MODAL TURNO ══ -->
 <div x-show="modalActivo==='turno'" style="display:none"
-     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
-     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
-     x-transition:enter-end="opacity-100">
+     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
     <div @click="cerrarModal()" class="absolute inset-0 bg-black/40"></div>
     <div class="relative bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-        <h3 class="font-bold text-gray-800 mb-5" x-text="modoEdicion ? 'Editar turno' : 'Nuevo turno'"></h3>
+        <h3 class="font-bold text-gray-800 mb-5" x-text="modoEdicion?'Editar turno':'Nuevo turno'"></h3>
         <div class="space-y-3">
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Fecha</label>
-                <input x-model="formTurno.fecha" type="date" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Hora</label>
-                <input x-model="formTurno.hora" type="time" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Cliente</label>
+            <div><label class="block text-xs font-medium text-gray-600 mb-1">Fecha</label>
+                <input x-model="formTurno.fecha" type="date" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
+            <div><label class="block text-xs font-medium text-gray-600 mb-1">Hora</label>
+                <input x-model="formTurno.hora" type="time" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
+            <div><label class="block text-xs font-medium text-gray-600 mb-1">Cliente</label>
                 <select x-model="formTurno.clienteId" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                     <option value="">— Seleccionar —</option>
                     <template x-for="c in clientes" :key="c.id">
                         <option :value="c.id" x-text="`${c.nombre} ${c.apellido||''}`"></option>
                     </template>
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Tratamiento</label>
+                </select></div>
+            <div><label class="block text-xs font-medium text-gray-600 mb-1">Tratamiento</label>
                 <select x-model="formTurno.tratamientoId" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                     <option value="">— Seleccionar —</option>
                     <template x-for="t in tratamientos" :key="t.id">
-                        <option :value="t.id" x-text="t.nombre + ' — ' + formatPrecio(t.precio)"></option>
+                        <option :value="t.id" x-text="t.nombre"></option>
                     </template>
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Estado</label>
+                </select></div>
+            <div><label class="block text-xs font-medium text-gray-600 mb-1">Estado</label>
                 <select x-model="formTurno.estado" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                     <option value="pendiente">Pendiente</option>
-                    <option value="confirmado">Confirmado</option>
-                    <option value="completado">Completado</option>
-                    <option value="cancelado">Cancelado</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Notas (opcional)</label>
-                <textarea x-model="formTurno.notas" rows="2" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 resize-none"></textarea>
-            </div>
+                    <option value="pagado">Pagado</option>
+                </select></div>
+            <div><label class="block text-xs font-medium text-gray-600 mb-1">Notas (opcional)</label>
+                <textarea x-model="formTurno.notas" rows="2" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 resize-none"></textarea></div>
         </div>
         <div class="flex gap-2 mt-5">
             <button @click="cerrarModal()" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition">Cancelar</button>
@@ -462,36 +485,24 @@
     </div>
 </div>
 
-<!-- ═══ MODAL CLIENTE ═══ -->
+<!-- ══ MODAL CLIENTE ══ -->
 <div x-show="modalActivo==='cliente'" style="display:none"
-     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
      x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
     <div @click="cerrarModal()" class="absolute inset-0 bg-black/40"></div>
     <div class="relative bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-xl">
-        <h3 class="font-bold text-gray-800 mb-5" x-text="modoEdicion ? 'Editar cliente' : 'Nueva cliente'"></h3>
+        <h3 class="font-bold text-gray-800 mb-5" x-text="modoEdicion?'Editar cliente':'Nueva cliente'"></h3>
         <div class="space-y-3">
             <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Nombre *</label>
-                    <input x-model="formCliente.nombre" type="text" placeholder="María" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Apellido</label>
-                    <input x-model="formCliente.apellido" type="text" placeholder="García" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
-                </div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Nombre *</label>
+                    <input x-model="formCliente.nombre" type="text" placeholder="María" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Apellido</label>
+                    <input x-model="formCliente.apellido" type="text" placeholder="García" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
             </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Teléfono</label>
-                <input x-model="formCliente.telefono" type="tel" placeholder="11 1234-5678" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Email</label>
-                <input x-model="formCliente.email" type="email" placeholder="mail@ejemplo.com" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Notas</label>
-                <textarea x-model="formCliente.notas" rows="2" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 resize-none"></textarea>
-            </div>
+            <div><label class="block text-xs font-medium text-gray-600 mb-1">Teléfono</label>
+                <input x-model="formCliente.telefono" type="tel" placeholder="11 1234-5678" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
+            <div><label class="block text-xs font-medium text-gray-600 mb-1">Notas</label>
+                <textarea x-model="formCliente.notas" rows="2" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 resize-none"></textarea></div>
         </div>
         <div class="flex gap-2 mt-5">
             <button @click="cerrarModal()" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition">Cancelar</button>
@@ -500,32 +511,93 @@
     </div>
 </div>
 
-<!-- ═══ MODAL TRATAMIENTO ═══ -->
+<!-- ══ MODAL TRATAMIENTO ══ -->
 <div x-show="modalActivo==='tratamiento'" style="display:none"
-     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
      x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
     <div @click="cerrarModal()" class="absolute inset-0 bg-black/40"></div>
     <div class="relative bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-xl">
-        <h3 class="font-bold text-gray-800 mb-5" x-text="modoEdicion ? 'Editar tratamiento' : 'Nuevo tratamiento'"></h3>
-        <div class="space-y-3">
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Nombre *</label>
-                <input x-model="formTratamiento.nombre" type="text" placeholder="Ej: Depilación facial" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Duración (min)</label>
-                    <input x-model="formTratamiento.duracion" type="number" min="1" placeholder="60" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Precio ($)</label>
-                    <input x-model="formTratamiento.precio" type="number" min="0" placeholder="0" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
-                </div>
-            </div>
-        </div>
+        <h3 class="font-bold text-gray-800 mb-5" x-text="modoEdicion?'Editar tratamiento':'Nuevo tratamiento'"></h3>
+        <div><label class="block text-xs font-medium text-gray-600 mb-1">Nombre *</label>
+            <input x-model="formTratamiento.nombre" type="text" placeholder="Ej: Depilación facial"
+                   class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
         <div class="flex gap-2 mt-5">
             <button @click="cerrarModal()" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition">Cancelar</button>
             <button @click="guardarTratamiento()" class="flex-1 py-2.5 rounded-xl bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium transition">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ══ MODAL HISTORIAL ══ -->
+<div x-show="modalActivo==='historial'" style="display:none"
+     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+    <div @click="cerrarModal()" class="absolute inset-0 bg-black/40"></div>
+    <div class="relative bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-shrink-0">
+            <div>
+                <h3 class="font-bold text-gray-800" x-text="'Historial de ' + (clienteHistorialActual?.nombre||'')"></h3>
+                <p class="text-xs text-gray-400" x-text="historialItems.length + ' entradas · Total: ' + formatPrecio(historialTotal)"></p>
+            </div>
+            <button @click="cerrarModal()" class="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Lista -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-2">
+            <div x-show="historialItems.length===0 && !mostrarFormHistorial" class="text-center py-10 text-gray-400 text-sm">
+                Sin entradas todavía
+            </div>
+            <template x-for="h in historialItems" :key="h.id">
+                <div class="bg-gray-50 rounded-2xl p-3.5 flex items-start justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <span class="text-xs font-bold text-gray-700" x-text="formatFecha(h.fecha)"></span>
+                            <span x-show="h.tratamientoId" class="text-xs text-pink-600 font-medium" x-text="nombreTratamiento(h.tratamientoId)"></span>
+                        </div>
+                        <p x-show="h.nota" class="text-xs text-gray-500 mt-0.5" x-text="h.nota"></p>
+                        <p class="text-sm font-bold text-green-600 mt-1" x-text="formatPrecio(h.importe)"></p>
+                    </div>
+                    <button @click="eliminarHistorial(h.id)" class="p-1 rounded-lg text-gray-300 hover:text-red-400 hover:bg-red-50 transition flex-shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                    </button>
+                </div>
+            </template>
+
+            <!-- Formulario nueva entrada -->
+            <div x-show="mostrarFormHistorial" class="bg-pink-50 rounded-2xl p-4 space-y-3 border border-pink-100">
+                <p class="text-sm font-bold text-gray-700">Nueva entrada</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-medium text-gray-600 mb-1">Fecha</label>
+                        <input x-model="formHistorial.fecha" type="date" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
+                    <div><label class="block text-xs font-medium text-gray-600 mb-1">Importe ($)</label>
+                        <input x-model="formHistorial.importe" type="number" min="0" placeholder="0" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
+                </div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Qué se hizo</label>
+                    <select x-model="formHistorial.tratamientoId" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                        <option value="">— Opcional —</option>
+                        <template x-for="t in tratamientos" :key="t.id">
+                            <option :value="t.id" x-text="t.nombre"></option>
+                        </template>
+                    </select></div>
+                <div><label class="block text-xs font-medium text-gray-600 mb-1">Nota</label>
+                    <textarea x-model="formHistorial.nota" rows="2" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 resize-none" placeholder="Observaciones..."></textarea></div>
+                <div class="flex gap-2">
+                    <button @click="mostrarFormHistorial=false" class="flex-1 py-2 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium bg-white">Cancelar</button>
+                    <button @click="guardarHistorial()" class="flex-1 py-2 rounded-xl bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium transition">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-4 py-3 border-t border-gray-100 flex-shrink-0">
+            <button x-show="!mostrarFormHistorial" @click="abrirFormHistorial()"
+                    class="w-full flex items-center justify-center gap-2 bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium py-2.5 rounded-xl transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                Agregar entrada
+            </button>
         </div>
     </div>
 </div>
