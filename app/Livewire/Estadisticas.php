@@ -53,6 +53,7 @@ class Estadisticas extends Component
     public function render()
     {
         $base = Turno::query()
+            ->whereDate('fecha', '<=', now())
             ->when($this->periodo !== 'todo', fn ($q) => $q->whereYear('fecha', $this->periodo));
 
         // Clientes: agregar en DB para eficiencia
