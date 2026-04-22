@@ -14,47 +14,56 @@ use Maatwebsite\Excel\Facades\Excel;
 #[Title('Estadísticas')]
 class Estadisticas extends Component
 {
-    public string $periodo = 'todo'; // 'todo' | '2025' | '2026' ...
+    public string $vista = 'mensual'; // 'mensual' | 'anual' | 'todo'
     public int    $anioFiltro;
+    public int    $mesFiltro;
 
     public function mount(): void
     {
         $this->anioFiltro = now()->year;
+        $this->mesFiltro  = now()->month;
     }
 
-    public function anioAnterior(): void
+    public function mesAnterior(): void
     {
-        $this->anioFiltro--;
-        $this->periodo = (string) $this->anioFiltro;
+        if ($this->mesFiltro === 1) { $this->mesFiltro = 12; $this->anioFiltro--; }
+        else { $this->mesFiltro--; }
     }
 
-    public function anioSiguiente(): void
+    public function mesSiguiente(): void
     {
-        $this->anioFiltro++;
-        $this->periodo = (string) $this->anioFiltro;
+        if ($this->mesFiltro === 12) { $this->mesFiltro = 1; $this->anioFiltro++; }
+        else { $this->mesFiltro++; }
     }
 
-    public function seleccionarTodo(): void
-    {
-        $this->periodo = 'todo';
-    }
+    public function anioAnterior(): void { $this->anioFiltro--; }
+    public function anioSiguiente(): void { $this->anioFiltro++; }
 
-    public function seleccionarAnio(): void
+    public function seleccionarVista(string $vista): void
     {
-        $this->periodo = (string) $this->anioFiltro;
+        $this->vista = $vista;
+        $this->anioFiltro = now()->year;
+        $this->mesFiltro  = now()->month;
     }
 
     public function exportarExcel()
     {
-        $nombre = 'estadisticas-' . ($this->periodo === 'todo' ? 'todo' : $this->periodo) . '-' . now()->format('Y-m-d') . '.xlsx';
-        return Excel::download(new EstadisticasExport($this->periodo), $nombre);
+        $nombre = 'estadisticas-' . $this->vista . '-' . now()->format('Y-m-d') . '.xlsx';
+        return Excel::download(new EstadisticasExport($this->vista === 'todo' ? 'todo' : (string) $this->anioFiltro), $nombre);
     }
 
     public function render()
     {
-        $base = Turno::query()
-            ->whereDate('fecha', '<=', now())
-            ->when($this->periodo !== 'todo', fn ($q) => $q->whereYear('fecha', $this->periodo));
+        $nombresMes = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $base = Turno::query()->whereDate('fecha', '<=', now());
+
+        if ($this->vista === 'mensual') {
+            $base->whereYear('fecha', $this->anioFiltro)->whereMonth('fecha', $this->mesFiltro);
+        } elseif ($this->vista === 'anual') {
+            $base->whereYear('fecha', $this->anioFiltro);
+        }
 
         // Clientes: agregar en DB para eficiencia
         $porCliente = (clone $base)
@@ -100,6 +109,7 @@ class Estadisticas extends Component
             'maxVeces'         => $maxVeces,
             'totalTurnos'      => $totalTurnos,
             'aniosDisponibles' => $aniosDisponibles,
+            'nombresMes'       => $nombresMes,
         ]);
     }
 }

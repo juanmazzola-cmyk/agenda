@@ -8,65 +8,70 @@
         <div class="flex items-center gap-2 flex-wrap">
 
             {{-- Exportar Excel --}}
-            <button
-                wire:click="exportarExcel"
-                class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 hover:border-green-400 text-gray-600 hover:text-green-700 text-sm font-medium rounded-lg transition"
-                title="Exportar a Excel"
-            >
+            <button wire:click="exportarExcel"
+                class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 hover:border-green-400 text-gray-600 hover:text-green-700 text-sm font-medium rounded-lg transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
                 </svg>
                 Excel
             </button>
 
-            {{-- Botón Todo --}}
-            <button
-                wire:click="seleccionarTodo"
-                class="px-4 py-2 rounded-lg text-sm font-medium transition
-                    {{ $periodo === 'todo'
-                        ? 'bg-pink-600 text-white shadow-sm'
-                        : 'bg-white text-gray-500 border border-gray-200 hover:border-pink-300 hover:text-pink-600' }}"
-            >
-                Todo el tiempo
-            </button>
+            {{-- Toggle Mensual / Anual / Todo --}}
+            <div class="flex rounded-lg overflow-hidden border border-gray-200 text-sm font-medium">
+                <button wire:click="seleccionarVista('mensual')"
+                    class="{{ $vista === 'mensual' ? 'bg-pink-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50' }} px-4 py-2 transition">
+                    Mensual
+                </button>
+                <button wire:click="seleccionarVista('anual')"
+                    class="{{ $vista === 'anual' ? 'bg-pink-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50' }} px-4 py-2 transition">
+                    Anual
+                </button>
+                <button wire:click="seleccionarVista('todo')"
+                    class="{{ $vista === 'todo' ? 'bg-pink-600 text-white' : 'bg-white text-gray-500 hover:bg-gray-50' }} px-4 py-2 transition">
+                    Todo
+                </button>
+            </div>
 
-            {{-- Selector de año --}}
+            {{-- Navegación mensual --}}
+            @if($vista === 'mensual')
             <div class="flex items-center rounded-lg border border-gray-200 overflow-hidden bg-white">
-                <button
-                    wire:click="anioAnterior"
-                    class="px-3 py-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition"
-                >
+                <button wire:click="mesAnterior" class="px-3 py-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
                     </svg>
                 </button>
-
-                <button
-                    wire:click="seleccionarAnio"
-                    class="px-4 py-2 text-sm font-medium min-w-16 text-center transition
-                        {{ $periodo === (string)$anioFiltro
-                            ? 'bg-pink-600 text-white'
-                            : 'text-gray-700 hover:bg-gray-50' }}"
-                >
-                    {{ $anioFiltro }}
-                </button>
-
-                <button
-                    wire:click="anioSiguiente"
-                    class="px-3 py-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition"
-                >
+                <span class="px-4 py-2 text-sm font-medium text-gray-700 min-w-36 text-center">
+                    {{ $nombresMes[$mesFiltro] }} {{ $anioFiltro }}
+                </span>
+                <button wire:click="mesSiguiente" class="px-3 py-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
                     </svg>
                 </button>
             </div>
+            @endif
 
-            {{-- Total del período --}}
+            {{-- Navegación anual --}}
+            @if($vista === 'anual')
+            <div class="flex items-center rounded-lg border border-gray-200 overflow-hidden bg-white">
+                <button wire:click="anioAnterior" class="px-3 py-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+                    </svg>
+                </button>
+                <span class="px-4 py-2 text-sm font-medium text-gray-700 min-w-16 text-center">{{ $anioFiltro }}</span>
+                <button wire:click="anioSiguiente" class="px-3 py-2 text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+                    </svg>
+                </button>
+            </div>
+            @endif
+
+            {{-- Total --}}
             @if($totalTurnos > 0)
             <span class="text-sm text-gray-400 bg-white border border-gray-200 rounded-lg px-3 py-2">
-                <strong class="text-gray-700">{{ $totalTurnos }}</strong>
-                {{ $totalTurnos === 1 ? 'turno' : 'turnos' }}
-                {{ $periodo === 'todo' ? 'en total' : 'en '.$periodo }}
+                <strong class="text-gray-700">{{ $totalTurnos }}</strong> {{ $totalTurnos === 1 ? 'turno' : 'turnos' }}
             </span>
             @endif
 
