@@ -349,10 +349,29 @@ function agendaApp() {
                 await db.transaction('rw', db.clientes, db.tratamientos, db.turnos, db.historial, async () => {
                     await db.clientes.clear(); await db.tratamientos.clear();
                     await db.turnos.clear(); await db.historial.clear();
-                    if (datos.clientes?.length)     await db.clientes.bulkAdd(datos.clientes.map(({id,...c}) => c));
-                    if (datos.tratamientos?.length) await db.tratamientos.bulkAdd(datos.tratamientos.map(({id,...t}) => t));
-                    if (datos.turnos?.length)       await db.turnos.bulkAdd(datos.turnos.map(({id,...t}) => t));
-                    if (datos.historial?.length)    await db.historial.bulkAdd(datos.historial.map(({id,...h}) => h));
+
+                    if (datos.clientes?.length) {
+                        await db.clientes.bulkAdd(datos.clientes.map(({ id, celular, telefono, ...c }) => ({
+                            ...c,
+                            telefono: telefono || celular || '',  // soporta ambos nombres
+                        })));
+                    }
+
+                    if (datos.tratamientos?.length) {
+                        await db.tratamientos.bulkAdd(datos.tratamientos.map(({ id, ...t }) => t));
+                    }
+
+                    if (datos.turnos?.length) {
+                        await db.turnos.bulkAdd(datos.turnos.map(({ id, cobrado, estado, ...t }) => ({
+                            ...t,
+                            // soporta "cobrado: true/false" y "estado: 'pagado'/'pendiente'"
+                            estado: estado || (cobrado === true ? 'pagado' : 'pendiente'),
+                        })));
+                    }
+
+                    if (datos.historial?.length) {
+                        await db.historial.bulkAdd(datos.historial.map(({ id, ...h }) => h));
+                    }
                 });
                 await this.cargar(); alert('Datos importados correctamente.');
             } catch(err) { alert('Error al importar: ' + err.message); }
