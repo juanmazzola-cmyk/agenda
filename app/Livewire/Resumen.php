@@ -44,32 +44,36 @@ class Resumen extends Component
                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
         if ($this->vista === 'mensual') {
-            $turnos = Turno::with('tratamiento')
+            $todosTurnos = Turno::with('tratamiento')
                 ->whereYear('fecha', $this->anio)
                 ->whereMonth('fecha', $this->mes)
-                ->whereDate('fecha', '<=', now())
                 ->get();
+            $turnosPasados = $todosTurnos->filter(fn ($t) => $t->fecha->lte(now()->startOfDay()));
         } else {
-            $turnos = Turno::with('tratamiento')
+            $todosTurnos = Turno::with('tratamiento')
                 ->whereYear('fecha', $this->anio)
-                ->whereDate('fecha', '<=', now())
                 ->get();
+            $turnosPasados = $todosTurnos->filter(fn ($t) => $t->fecha->lte(now()->startOfDay()));
         }
 
         $filtrados = $this->filtro === 'cobrados'
-            ? $turnos->where('cobrado', true)
-            : $turnos;
+            ? $turnosPasados->where('cobrado', true)
+            : $turnosPasados;
+
+        $todosFiltrados = $this->filtro === 'cobrados'
+            ? $todosTurnos->where('cobrado', true)
+            : $todosTurnos;
 
         // KPIs
         $kpis = [
-            'turnos'    => $filtrados->count(),
+            'turnos'    => $todosFiltrados->count(),
+            'atendidas' => $filtrados->count(),
             'facturado' => $filtrados->sum('valor'),
             'cobrado'   => $filtrados->where('cobrado', true)->sum('valor'),
             'pendiente' => $filtrados->where('cobrado', false)->sum('valor'),
-            'clientes'  => $filtrados->pluck('cliente_id')->unique()->count(),
         ];
 
-        // Por tratamiento
+        // Por tratamiento (solo turnos pasados)
         $porTratamiento = $filtrados
             ->groupBy('tratamiento_id')
             ->map(fn ($g) => [
@@ -82,7 +86,7 @@ class Resumen extends Component
             ->sortByDesc('facturado')
             ->values();
 
-        // Por mes (solo vista anual)
+        // Por mes (solo vista anual, solo pasados)
         $porMes = null;
         if ($this->vista === 'anual') {
             $porMes = collect(range(1, 12))->map(function ($m) use ($filtrados, $nombresMes) {

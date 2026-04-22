@@ -104,11 +104,11 @@
             <p class="text-xs text-gray-400 mt-1">en el período</p>
         </div>
 
-        {{-- Clientes --}}
+        {{-- Clientes atendidas --}}
         <div class="bg-white rounded-xl shadow-sm p-4 border border-pink-100 bg-pink-50/20">
-            <p class="text-xs font-semibold text-pink-500 uppercase tracking-wide mb-1">Clientes</p>
-            <p class="text-xl font-bold text-pink-700">{{ $kpis['clientes'] }}</p>
-            <p class="text-xs text-pink-400 mt-1">atendidas</p>
+            <p class="text-xs font-semibold text-pink-500 uppercase tracking-wide mb-1">Clientes atendidas</p>
+            <p class="text-xl font-bold text-pink-700">{{ $kpis['atendidas'] }}</p>
+            <p class="text-xs text-pink-400 mt-1">turnos realizados</p>
         </div>
 
         {{-- Facturado --}}
@@ -272,7 +272,7 @@
                     <tfoot class="border-t-2 border-gray-200 bg-gray-50">
                         <tr>
                             <td class="px-5 py-3 font-bold text-gray-800 text-sm">Total</td>
-                            <td class="px-5 py-3 text-right font-bold text-gray-800">{{ $kpis['turnos'] }}</td>
+                            <td class="px-5 py-3 text-right font-bold text-gray-800">{{ $kpis['atendidas'] }}</td>
                             <td class="px-5 py-3 text-right font-bold text-gray-800">${{ number_format($kpis['facturado'], 0, ',', '.') }}</td>
                             <td class="px-5 py-3 text-right font-bold text-green-700">${{ number_format($kpis['cobrado'], 0, ',', '.') }}</td>
                             <td class="px-5 py-3 text-right font-bold text-amber-700">
