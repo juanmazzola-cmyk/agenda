@@ -40,9 +40,9 @@ function agendaApp() {
 
         busquedaClientes: '',
 
-        resumenMes: -1,
+        resumenMes: new Date().getMonth(),
         resumenAnio: new Date().getFullYear(),
-        estadisticasMesSel: -1,
+        estadisticasMesSel: new Date().getMonth(),
         estadisticasAnioSel: new Date().getFullYear(),
 
         mensajeWA: localStorage.getItem('mensajeWA') ||

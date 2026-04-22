@@ -322,14 +322,14 @@
             <div class="flex items-center gap-2 mb-4 flex-wrap">
                 <h2 class="text-lg font-bold text-gray-800 mr-auto">Resumen</h2>
                 <select x-model.number="resumenMes" class="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white">
-                    <option value="-1">Año completo</option>
+                    <option value="-1" :selected="resumenMes === -1">Año completo</option>
                     <template x-for="(m, i) in MESES" :key="i">
-                        <option :value="i" x-text="m"></option>
+                        <option :value="i" :selected="i === resumenMes" x-text="m"></option>
                     </template>
                 </select>
                 <select x-model.number="resumenAnio" class="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white">
                     <template x-for="a in aniosDisponibles" :key="a">
-                        <option :value="a" x-text="a"></option>
+                        <option :value="a" :selected="a === resumenAnio" x-text="a"></option>
                     </template>
                 </select>
             </div>
@@ -341,7 +341,7 @@
                     <p class="text-xs text-gray-500 mt-1">Sesiones</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 shadow-sm text-center">
-                    <p class="text-xl font-bold text-green-600" x-text="formatPrecio(resumenDatos.ingresos)"></p>
+                    <p class="text-sm font-bold text-green-600 break-all leading-snug" x-text="formatPrecio(resumenDatos.ingresos)"></p>
                     <p class="text-xs text-gray-500 mt-1">Ingresos</p>
                 </div>
                 <div class="bg-white rounded-2xl p-4 shadow-sm text-center">
@@ -373,14 +373,14 @@
             <div class="flex items-center gap-2 mb-4 flex-wrap">
                 <h2 class="text-lg font-bold text-gray-800 mr-auto">Estadísticas</h2>
                 <select x-model.number="estadisticasMesSel" class="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white">
-                    <option value="-1">Año completo</option>
+                    <option value="-1" :selected="estadisticasMesSel === -1">Año completo</option>
                     <template x-for="(m, i) in MESES" :key="i">
-                        <option :value="i" x-text="m"></option>
+                        <option :value="i" :selected="i === estadisticasMesSel" x-text="m"></option>
                     </template>
                 </select>
                 <select x-model.number="estadisticasAnioSel" class="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white">
                     <template x-for="a in aniosDisponibles" :key="a">
-                        <option :value="a" x-text="a"></option>
+                        <option :value="a" :selected="a === estadisticasAnioSel" x-text="a"></option>
                     </template>
                 </select>
             </div>
