@@ -204,17 +204,17 @@
                             <div class="flex gap-1 flex-shrink-0">
                                 <!-- WA -->
                                 <button @click="abrirWhatsApp(clientes.find(c=>c.id===t.clienteId)||{})"
-                                        class="p-1.5 rounded-lg text-gray-400 hover:text-green-500 hover:bg-green-50 transition"
+                                        class="p-1.5 rounded-lg text-green-500 hover:bg-green-50 transition"
                                         title="WhatsApp">
                                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
                                         <path d="M12 0C5.373 0 0 5.373 0 12c0 2.114.549 4.099 1.51 5.827L0 24l6.335-1.652A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.869 9.869 0 01-5.031-1.378l-.361-.214-3.741.975.999-3.648-.235-.374A9.855 9.855 0 012.118 12C2.118 6.538 6.538 2.118 12 2.118S21.882 6.538 21.882 12 17.462 21.882 12 21.882z"/>
                                     </svg>
                                 </button>
-                                <button @click="editarTurno(t)" class="p-1.5 rounded-lg text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition">
+                                <button @click="editarTurno(t)" class="p-1.5 rounded-lg text-orange-400 hover:bg-orange-50 transition">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
                                 </button>
-                                <button @click="eliminarTurno(t.id)" class="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition">
+                                <button @click="eliminarTurno(t.id)" class="p-1.5 rounded-lg text-red-400 hover:bg-red-50 transition">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
                                 </button>
                             </div>
@@ -264,24 +264,24 @@
                             <!-- Iconos de acción -->
                             <div class="flex gap-1 flex-shrink-0">
                                 <!-- WhatsApp -->
-                                <button @click="abrirWhatsApp(c)" class="p-1.5 rounded-lg text-gray-400 hover:text-green-500 hover:bg-green-50 transition" title="WhatsApp">
+                                <button @click="abrirWhatsApp(c)" class="p-1.5 rounded-lg text-green-500 hover:bg-green-50 transition" title="WhatsApp">
                                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
                                         <path d="M12 0C5.373 0 0 5.373 0 12c0 2.114.549 4.099 1.51 5.827L0 24l6.335-1.652A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.869 9.869 0 01-5.031-1.378l-.361-.214-3.741.975.999-3.648-.235-.374A9.855 9.855 0 012.118 12C2.118 6.538 6.538 2.118 12 2.118S21.882 6.538 21.882 12 17.462 21.882 12 21.882z"/>
                                     </svg>
                                 </button>
                                 <!-- Historial -->
-                                <button @click="verHistorial(c.id)" class="p-1.5 rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition" title="Historial">
+                                <button @click="verHistorial(c.id)" class="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50 transition" title="Historial">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
                                     </svg>
                                 </button>
                                 <!-- Editar -->
-                                <button @click="editarCliente(c)" class="p-1.5 rounded-lg text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition">
+                                <button @click="editarCliente(c)" class="p-1.5 rounded-lg text-orange-400 hover:bg-orange-50 transition">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
                                 </button>
                                 <!-- Eliminar -->
-                                <button @click="eliminarCliente(c.id)" class="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition">
+                                <button @click="eliminarCliente(c.id)" class="p-1.5 rounded-lg text-red-400 hover:bg-red-50 transition">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
                                 </button>
                             </div>
@@ -306,10 +306,10 @@
                     <div class="bg-white rounded-2xl px-4 py-3.5 shadow-sm flex items-center justify-between">
                         <p class="font-semibold text-gray-800 text-sm" x-text="t.nombre"></p>
                         <div class="flex gap-1">
-                            <button @click="editarTratamiento(t)" class="p-1.5 rounded-lg text-gray-400 hover:text-pink-600 hover:bg-pink-50 transition">
+                            <button @click="editarTratamiento(t)" class="p-1.5 rounded-lg text-orange-400 hover:bg-orange-50 transition">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
                             </button>
-                            <button @click="eliminarTratamiento(t.id)" class="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition">
+                            <button @click="eliminarTratamiento(t.id)" class="p-1.5 rounded-lg text-red-400 hover:bg-red-50 transition">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
                             </button>
                         </div>
