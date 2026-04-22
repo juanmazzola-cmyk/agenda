@@ -40,7 +40,7 @@ function agendaApp() {
 
         busquedaClientes: '',
 
-        resumenMes: new Date().getMonth(),
+        resumenMes: -1,
         resumenAnio: new Date().getFullYear(),
         estadisticasMesSel: -1,
         estadisticasAnioSel: new Date().getFullYear(),
@@ -309,22 +309,21 @@ function agendaApp() {
             const pref = this.resumenMes === -1
                 ? `${this.resumenAnio}-`
                 : `${this.resumenAnio}-${String(this.resumenMes+1).padStart(2,'0')}`;
-            const entradas = this.historialAll.filter(h => h.fecha.startsWith(pref));
-            const totalIngresos = entradas.reduce((s, h) => s + Number(h.importe||0), 0);
+            const entradas = this.turnos.filter(t => t.fecha && t.fecha.startsWith(pref));
+            const totalIngresos = entradas.reduce((s, t) => s + Number(t.valor||0), 0);
 
-            // Agrupado por tratamiento
             const grupos = {};
-            entradas.forEach(h => {
-                const key = h.tratamientoId || '__sin__';
-                if (!grupos[key]) grupos[key] = { nombre: h.tratamientoId ? this.nombreTratamiento(h.tratamientoId) : 'Sin tratamiento', count: 0, total: 0 };
+            entradas.forEach(t => {
+                const key = t.tratamientoId || '__sin__';
+                if (!grupos[key]) grupos[key] = { nombre: t.tratamientoId ? this.nombreTratamiento(t.tratamientoId) : 'Sin tratamiento', count: 0, total: 0 };
                 grupos[key].count++;
-                grupos[key].total += Number(h.importe||0);
+                grupos[key].total += Number(t.valor||0);
             });
 
             return {
                 total: entradas.length,
                 ingresos: totalIngresos,
-                clientesUnicos: new Set(entradas.map(h => h.clienteId)).size,
+                clientesUnicos: new Set(entradas.map(t => t.clienteId)).size,
                 porTratamiento: Object.values(grupos).sort((a,b) => b.total - a.total),
             };
         },
@@ -336,9 +335,9 @@ function agendaApp() {
                 : [this.estadisticasMesSel];
             return indices.map(i => {
                 const pref = `${this.estadisticasAnioSel}-${String(i+1).padStart(2,'0')}`;
-                const hs = this.historialAll.filter(h => h.fecha.startsWith(pref));
-                const ingresos = hs.reduce((s,h) => s + Number(h.importe||0), 0);
-                return { mes: MESES[i].slice(0,3), total: hs.length, ingresos };
+                const ts = this.turnos.filter(t => t.fecha && t.fecha.startsWith(pref));
+                const ingresos = ts.reduce((s,t) => s + Number(t.valor||0), 0);
+                return { mes: MESES[i].slice(0,3), total: ts.length, ingresos };
             });
         },
 
