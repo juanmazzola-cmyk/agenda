@@ -11,8 +11,9 @@ use Livewire\Component;
 #[Title('Resumen Económico')]
 class Resumen extends Component
 {
-    public string $vista  = 'mensual'; // 'mensual' | 'anual'
-    public string $filtro = 'todos';   // 'todos'   | 'cobrados'
+    public string $vista         = 'mensual';
+    public string $filtro        = 'todos';
+    public bool   $ocultarMontos = false;
     public int    $anio;
     public int    $mes;
 
@@ -46,10 +47,12 @@ class Resumen extends Component
             $turnos = Turno::with('tratamiento')
                 ->whereYear('fecha', $this->anio)
                 ->whereMonth('fecha', $this->mes)
+                ->whereDate('fecha', '<=', now())
                 ->get();
         } else {
             $turnos = Turno::with('tratamiento')
                 ->whereYear('fecha', $this->anio)
+                ->whereDate('fecha', '<=', now())
                 ->get();
         }
 

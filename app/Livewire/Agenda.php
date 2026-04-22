@@ -125,7 +125,7 @@ class Agenda extends Component
             'tratamiento_id' => (int) $this->tratamientoId,
             'fecha'          => $this->fecha,
             'hora'           => $this->hora,
-            'valor'          => $this->valor !== '' ? (float) $this->valor : null,
+            'valor'          => $this->valor !== '' ? (float) str_replace(['.', ','], ['', '.'], $this->valor) : null,
             'cobrado'        => $this->cobrado,
             'notas'          => $this->notas ?: null,
         ];

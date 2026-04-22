@@ -139,8 +139,8 @@ class Clientes extends Component
                 $q->where('nombre',   'like', "%{$this->buscar}%")
                   ->orWhere('apellido', 'like', "%{$this->buscar}%");
             })
-            ->orderBy('apellido')
             ->orderBy('nombre')
+            ->orderBy('apellido')
             ->paginate(10);
 
         $clienteHistorial = $this->historialClienteId

@@ -139,15 +139,6 @@
                             <p class="font-semibold text-gray-800 text-sm leading-tight whitespace-nowrap">
                                 {{ $turno->cliente->nombre }} {{ $turno->cliente->apellido }}
                             </p>
-                            @if($turno->cobrado)
-                                <button wire:click="toggleCobrado({{ $turno->id }})" class="inline-block mt-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold hover:bg-green-200 transition cursor-pointer">
-                                    Cobrado
-                                </button>
-                            @else
-                                <button wire:click="toggleCobrado({{ $turno->id }})" class="inline-block mt-1 text-xs bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full font-semibold hover:bg-amber-100 transition cursor-pointer">
-                                    Pendiente
-                                </button>
-                            @endif
                             <p class="text-xs text-gray-400 uppercase tracking-wide mt-1">
                                 {{ $turno->tratamiento->nombre }}
                             </p>
@@ -315,9 +306,10 @@
                             wire:model="valor"
                             type="number"
                             min="0"
-                            step="0.01"
+                            step="1"
+                            x-on:focus="$el.select()"
                             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 @error('valor') border-red-400 @enderror"
-                            placeholder="0.00"
+                            placeholder="0"
                         >
                         @error('valor')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
