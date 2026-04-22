@@ -329,20 +329,23 @@ function agendaApp() {
         },
 
         // ── Estadísticas ─────────────────────────────────────────────
-        get estadisticasMensuales() {
-            const indices = this.estadisticasMesSel === -1
-                ? Array.from({ length: 12 }, (_, i) => i)
-                : [this.estadisticasMesSel];
-            return indices.map(i => {
-                const pref = `${this.estadisticasAnioSel}-${String(i+1).padStart(2,'0')}`;
-                const ts = this.turnos.filter(t => t.fecha && t.fecha.startsWith(pref));
-                const ingresos = ts.reduce((s,t) => s + Number(t.valor||0), 0);
-                return { mes: MESES[i].slice(0,3), total: ts.length, ingresos };
+        get estadisticasPorCliente() {
+            const pref = this.estadisticasMesSel === -1
+                ? `${this.estadisticasAnioSel}-`
+                : `${this.estadisticasAnioSel}-${String(this.estadisticasMesSel+1).padStart(2,'0')}`;
+            const ts = this.turnos.filter(t => t.fecha && t.fecha.startsWith(pref));
+            const grupos = {};
+            ts.forEach(t => {
+                const key = t.clienteId || '__sin__';
+                if (!grupos[key]) grupos[key] = { nombre: this.nombreCliente(t.clienteId), sesiones: 0, ingresos: 0 };
+                grupos[key].sesiones++;
+                grupos[key].ingresos += Number(t.valor||0);
             });
+            return Object.values(grupos).sort((a,b) => b.sesiones - a.sesiones);
         },
 
         get maxEstadisticas() {
-            return Math.max(1, ...this.estadisticasMensuales.map(e => e.total));
+            return Math.max(1, ...this.estadisticasPorCliente.map(e => e.sesiones));
         },
 
         // ── Backup ───────────────────────────────────────────────────

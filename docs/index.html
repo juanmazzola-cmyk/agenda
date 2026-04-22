@@ -384,15 +384,18 @@
                     </template>
                 </select>
             </div>
+            <div x-show="estadisticasPorCliente.length===0" class="text-center py-8 text-gray-400 text-sm bg-white rounded-2xl">
+                Sin registros en este período
+            </div>
             <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-                <template x-for="(e, i) in estadisticasMensuales" :key="i">
+                <template x-for="(e, i) in estadisticasPorCliente" :key="i">
                     <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0">
-                        <span class="w-8 text-xs font-semibold text-gray-500 flex-shrink-0" x-text="e.mes"></span>
+                        <span class="w-28 text-xs font-semibold text-gray-700 flex-shrink-0 truncate" x-text="e.nombre"></span>
                         <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                             <div class="h-full bg-pink-400 rounded-full transition-all duration-500"
-                                 :style="`width:${maxEstadisticas>0?(e.total/maxEstadisticas*100):0}%`"></div>
+                                 :style="`width:${maxEstadisticas>0?(e.sesiones/maxEstadisticas*100):0}%`"></div>
                         </div>
-                        <span class="w-5 text-xs font-bold text-gray-700 text-right flex-shrink-0" x-text="e.total"></span>
+                        <span class="w-5 text-xs font-bold text-gray-700 text-right flex-shrink-0" x-text="e.sesiones"></span>
                         <span class="w-20 text-xs text-green-600 font-medium text-right flex-shrink-0" x-text="formatPrecio(e.ingresos)"></span>
                     </div>
                 </template>
