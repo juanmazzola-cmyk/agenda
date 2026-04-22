@@ -24,7 +24,7 @@ function agendaApp() {
 
         mesVista: new Date().getMonth(),
         anioVista: new Date().getFullYear(),
-        diaSeleccionado: null,
+        diaSeleccionado: new Date().getDate(),
 
         modalActivo: null,
         modoEdicion: false,
@@ -67,7 +67,17 @@ function agendaApp() {
         },
 
         // ── Navegación ───────────────────────────────────────────────
-        ir(s) { this.seccion = s; this.menuAbierto = false; this.diaSeleccionado = null; },
+        ir(s) {
+            this.seccion = s;
+            this.menuAbierto = false;
+            const hoy = new Date();
+            // Al volver a agenda, seleccionar hoy si estamos en el mes actual
+            if (s === 'agenda' && this.mesVista === hoy.getMonth() && this.anioVista === hoy.getFullYear()) {
+                this.diaSeleccionado = hoy.getDate();
+            } else if (s !== 'agenda') {
+                this.diaSeleccionado = null;
+            }
+        },
 
         get titulo() {
             return { agenda:'Agenda', clientes:'Clientes', tratamientos:'Tratamientos',
@@ -115,7 +125,7 @@ function agendaApp() {
         // ── Turnos ───────────────────────────────────────────────────
         abrirNuevoTurno(dia) {
             const fecha = dia ? this.fechaStr(this.anioVista, this.mesVista, dia) : '';
-            this.formTurno = { fecha, hora: '09:00', clienteId: '', tratamientoId: '', notas: '', estado: 'pendiente' };
+            this.formTurno = { fecha, hora: '09:00', clienteId: '', tratamientoId: '', notas: '', estado: 'pendiente', valor: 0 };
             this.modoEdicion = false; this.modalActivo = 'turno';
         },
 
@@ -133,6 +143,7 @@ function agendaApp() {
                 tratamientoId: Number(this.formTurno.tratamientoId),
                 notas: this.formTurno.notas || '',
                 estado: this.formTurno.estado || 'pendiente',
+                valor: Number(this.formTurno.valor) || 0,
             };
             this.formTurno.id ? await db.turnos.update(this.formTurno.id, d) : await db.turnos.add(d);
             await this.cargar(); this.cerrarModal();
@@ -365,7 +376,7 @@ function agendaApp() {
                         await db.turnos.bulkAdd(datos.turnos.map(({ id, cobrado, estado, ...t }) => ({
                             ...t,
                             // soporta "cobrado: true/false" y "estado: 'pagado'/'pendiente'"
-                            estado: estado || (cobrado === true ? 'pagado' : 'pendiente'),
+                            estado: estado || (cobrado ? 'pagado' : 'pendiente'),
                         })));
                     }
 
