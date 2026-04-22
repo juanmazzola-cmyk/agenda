@@ -322,6 +322,7 @@
             <div class="flex items-center gap-2 mb-4 flex-wrap">
                 <h2 class="text-lg font-bold text-gray-800 mr-auto">Resumen</h2>
                 <select x-model.number="resumenMes" class="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white">
+                    <option value="-1">Año completo</option>
                     <template x-for="(m, i) in MESES" :key="i">
                         <option :value="i" x-text="m"></option>
                     </template>
@@ -369,8 +370,14 @@
 
         <!-- ══ ESTADÍSTICAS ══ -->
         <div x-show="seccion==='estadisticas'">
-            <div class="flex items-center gap-3 mb-4 flex-wrap">
+            <div class="flex items-center gap-2 mb-4 flex-wrap">
                 <h2 class="text-lg font-bold text-gray-800 mr-auto">Estadísticas</h2>
+                <select x-model.number="estadisticasMesSel" class="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white">
+                    <option value="-1">Año completo</option>
+                    <template x-for="(m, i) in MESES" :key="i">
+                        <option :value="i" x-text="m"></option>
+                    </template>
+                </select>
                 <select x-model.number="estadisticasAnioSel" class="border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white">
                     <template x-for="a in aniosDisponibles" :key="a">
                         <option :value="a" x-text="a"></option>
