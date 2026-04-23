@@ -348,6 +348,13 @@ function agendaApp() {
             return Math.max(1, ...this.estadisticasPorCliente.map(e => e.sesiones));
         },
 
+        get estadisticasTotal() {
+            return this.estadisticasPorCliente.reduce(
+                (acc, e) => ({ sesiones: acc.sesiones + e.sesiones, ingresos: acc.ingresos + e.ingresos }),
+                { sesiones: 0, ingresos: 0 }
+            );
+        },
+
         // ── Backup ───────────────────────────────────────────────────
         async exportar() {
             const datos = { version:2, exportado: new Date().toISOString(),
