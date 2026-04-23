@@ -420,6 +420,21 @@ function agendaApp() {
                                     valor:  a.price || 0,
                                 }))
                             );
+
+                            // Poblar historial con los turnos pasados
+                            const hoy = new Date().toISOString().slice(0, 10);
+                            const pasados = datos.appointments.filter(a => a.date <= hoy);
+                            if (pasados.length) {
+                                await db.historial.bulkAdd(
+                                    pasados.map(a => ({
+                                        clienteId:     clientMap[a.clientId]   || 0,
+                                        fecha:         a.date,
+                                        tratamientoId: serviceMap[a.serviceId] || 0,
+                                        nota:          a.notes || '',
+                                        importe:       a.price || 0,
+                                    }))
+                                );
+                            }
                         }
 
                         // Convertir {{variable}} → {variable}
