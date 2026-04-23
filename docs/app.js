@@ -409,6 +409,9 @@ function agendaApp() {
                         }
 
                         if (datos.appointments?.length) {
+                            // Ayer y antes = pagado; hoy en adelante = pendiente
+                            const hoy = new Date().toISOString().slice(0, 10);
+
                             await db.turnos.bulkPut(
                                 datos.appointments.map(a => ({
                                     clienteId:     clientMap[a.clientId]   || 0,
@@ -416,14 +419,13 @@ function agendaApp() {
                                     fecha:  a.date,
                                     hora:   a.time,
                                     notas:  a.notes || '',
-                                    estado: (a.paid === true) ? 'pagado' : 'pendiente',
+                                    estado: a.date < hoy ? 'pagado' : 'pendiente',
                                     valor:  a.price || 0,
                                 }))
                             );
 
-                            // Poblar historial con los turnos pasados
-                            const hoy = new Date().toISOString().slice(0, 10);
-                            const pasados = datos.appointments.filter(a => a.date <= hoy);
+                            // Historial: solo turnos de días anteriores a hoy
+                            const pasados = datos.appointments.filter(a => a.date < hoy);
                             if (pasados.length) {
                                 await db.historial.bulkAdd(
                                     pasados.map(a => ({
