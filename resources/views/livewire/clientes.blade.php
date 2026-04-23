@@ -154,7 +154,8 @@
                     <input
                         wire:model="nombre"
                         type="text"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 @error('nombre') border-red-400 @enderror"
+                        autocapitalize="words"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-pink-400 @error('nombre') border-red-400 @enderror"
                         placeholder="Ej: María"
                         autofocus
                     >
@@ -169,7 +170,8 @@
                     <input
                         wire:model="apellido"
                         type="text"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 @error('apellido') border-red-400 @enderror"
+                        autocapitalize="words"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-pink-400 @error('apellido') border-red-400 @enderror"
                         placeholder="Ej: García"
                     >
                     @error('apellido')

@@ -290,6 +290,13 @@
                         }
                     }"
                     x-init="
+                        $wire.$watch('clienteId', id => {
+                            if (!id) { busqueda = ''; abierto = false; }
+                            else {
+                                const c = clientes.find(c => String(c.id) === String(id));
+                                if (c) busqueda = c.apellido + ', ' + c.nombre;
+                            }
+                        });
                         const id = $wire.get('clienteId');
                         if (id) {
                             const c = clientes.find(c => String(c.id) === String(id));
@@ -306,7 +313,7 @@
                             type="text"
                             x-model="busqueda"
                             @input="abierto = true"
-                            @focus="abierto = true"
+                            @focus="abierto = true; $event.target.select()"
                             placeholder="Buscar cliente..."
                             autocomplete="off"
                             class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 @error('clienteId') border-red-400 @enderror"
