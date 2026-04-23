@@ -380,37 +380,43 @@ function agendaApp() {
 
                     if (datos.clients && datos.appointments !== undefined) {
                         // ── Formato React (clients / appointments / services) ──
+
+                        // Asignar IDs enteros secuenciales y construir mapas de conversión
                         const clientMap = {};
+                        (datos.clients || []).forEach((c, i) => { clientMap[c.id] = i + 1; });
+
+                        const serviceMap = {};
+                        (datos.services || []).forEach((s, i) => { serviceMap[s.id] = i + 1; });
+
                         if (datos.clients?.length) {
-                            const ids = await db.clientes.bulkAdd(
-                                datos.clients.map(c => ({
+                            await db.clientes.bulkPut(
+                                datos.clients.map((c, i) => ({
+                                    id:       i + 1,
                                     nombre:   c.firstName || '',
                                     apellido: c.lastName  || '',
                                     telefono: c.phone     || '',
-                                })),
-                                { allKeys: true }
+                                }))
                             );
-                            datos.clients.forEach((c, i) => { clientMap[c.id] = ids[i]; });
                         }
 
-                        const serviceMap = {};
                         if (datos.services?.length) {
-                            const ids = await db.tratamientos.bulkAdd(
-                                datos.services.map(s => ({ nombre: s.name })),
-                                { allKeys: true }
+                            await db.tratamientos.bulkPut(
+                                datos.services.map((s, i) => ({
+                                    id:     i + 1,
+                                    nombre: s.name || '',
+                                }))
                             );
-                            datos.services.forEach((s, i) => { serviceMap[s.id] = ids[i]; });
                         }
 
                         if (datos.appointments?.length) {
-                            await db.turnos.bulkAdd(
+                            await db.turnos.bulkPut(
                                 datos.appointments.map(a => ({
                                     clienteId:     clientMap[a.clientId]   || 0,
                                     tratamientoId: serviceMap[a.serviceId] || 0,
                                     fecha:  a.date,
                                     hora:   a.time,
                                     notas:  a.notes || '',
-                                    estado: a.completed ? 'pagado' : 'pendiente',
+                                    estado: (a.paid === true) ? 'pagado' : 'pendiente',
                                     valor:  a.price || 0,
                                 }))
                             );
