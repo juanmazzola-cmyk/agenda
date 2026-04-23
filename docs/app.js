@@ -369,36 +369,91 @@ function agendaApp() {
 
         async importar(e) {
             const file = e.target.files[0]; if (!file) return;
+            let waTemplate = null;
             try {
                 const datos = JSON.parse(await file.text());
                 if (!confirm('Esto reemplazará TODOS los datos actuales. ¿Continuar?')) return;
+
                 await db.transaction('rw', db.clientes, db.tratamientos, db.turnos, db.historial, async () => {
                     await db.clientes.clear(); await db.tratamientos.clear();
                     await db.turnos.clear(); await db.historial.clear();
 
-                    if (datos.clientes?.length) {
-                        await db.clientes.bulkPut(datos.clientes.map(({ celular, telefono, ...c }) => ({
-                            ...c,
-                            telefono: telefono || celular || '',
-                        })));
-                    }
+                    if (datos.clients && datos.appointments !== undefined) {
+                        // ── Formato React (clients / appointments / services) ──
+                        const clientMap = {};
+                        if (datos.clients?.length) {
+                            const ids = await db.clientes.bulkAdd(
+                                datos.clients.map(c => ({
+                                    nombre:   c.firstName || '',
+                                    apellido: c.lastName  || '',
+                                    telefono: c.phone     || '',
+                                })),
+                                { allKeys: true }
+                            );
+                            datos.clients.forEach((c, i) => { clientMap[c.id] = ids[i]; });
+                        }
 
-                    if (datos.tratamientos?.length) {
-                        await db.tratamientos.bulkPut(datos.tratamientos);
-                    }
+                        const serviceMap = {};
+                        if (datos.services?.length) {
+                            const ids = await db.tratamientos.bulkAdd(
+                                datos.services.map(s => ({ nombre: s.name })),
+                                { allKeys: true }
+                            );
+                            datos.services.forEach((s, i) => { serviceMap[s.id] = ids[i]; });
+                        }
 
-                    if (datos.turnos?.length) {
-                        await db.turnos.bulkPut(datos.turnos.map(({ cobrado, estado, ...t }) => ({
-                            ...t,
-                            estado: estado || (cobrado ? 'pagado' : 'pendiente'),
-                        })));
-                    }
+                        if (datos.appointments?.length) {
+                            await db.turnos.bulkAdd(
+                                datos.appointments.map(a => ({
+                                    clienteId:     clientMap[a.clientId]   || 0,
+                                    tratamientoId: serviceMap[a.serviceId] || 0,
+                                    fecha:  a.date,
+                                    hora:   a.time,
+                                    notas:  a.notes || '',
+                                    estado: a.completed ? 'pagado' : 'pendiente',
+                                    valor:  a.price || 0,
+                                }))
+                            );
+                        }
 
-                    if (datos.historial?.length) {
-                        await db.historial.bulkPut(datos.historial);
+                        // Convertir {{variable}} → {variable}
+                        if (datos.waTemplate) {
+                            waTemplate = datos.waTemplate.replace(/\{\{(\w+)\}\}/g, '{$1}');
+                        }
+
+                    } else if (datos.clientes !== undefined || datos.turnos !== undefined) {
+                        // ── Nuestro formato (clientes / turnos / tratamientos) ──
+                        if (datos.clientes?.length) {
+                            await db.clientes.bulkPut(datos.clientes.map(({ celular, telefono, ...c }) => ({
+                                ...c,
+                                telefono: telefono || celular || '',
+                            })));
+                        }
+                        if (datos.tratamientos?.length) {
+                            await db.tratamientos.bulkPut(datos.tratamientos);
+                        }
+                        if (datos.turnos?.length) {
+                            await db.turnos.bulkPut(datos.turnos.map(({ cobrado, estado, ...t }) => ({
+                                ...t,
+                                estado: estado || (cobrado ? 'pagado' : 'pendiente'),
+                            })));
+                        }
+                        if (datos.historial?.length) {
+                            await db.historial.bulkPut(datos.historial);
+                        }
+
+                    } else {
+                        throw new Error('Formato de backup no reconocido.');
                     }
                 });
-                await this.cargar(); alert('Datos importados correctamente.');
+
+                if (waTemplate) {
+                    localStorage.setItem('mensajeWA', waTemplate);
+                    this.mensajeWA = waTemplate;
+                }
+
+                await this.cargar();
+                alert('Datos importados correctamente.');
             } catch(err) { alert('Error al importar: ' + err.message); }
             e.target.value = '';
         },
