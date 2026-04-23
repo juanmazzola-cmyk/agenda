@@ -265,17 +265,81 @@
                 </div>
 
                 {{-- Cliente --}}
-                <div>
+                <div
+                    x-data="{
+                        busqueda: '',
+                        abierto: false,
+                        clientes: @js($clientes->map(fn($c) => ['id' => $c->id, 'apellido' => $c->apellido, 'nombre' => $c->nombre])),
+                        get filtrados() {
+                            const q = this.busqueda.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+                            if (!q) return this.clientes.slice(0, 10);
+                            return this.clientes.filter(c => {
+                                const t = (c.apellido + ' ' + c.nombre).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+                                return t.includes(q);
+                            }).slice(0, 10);
+                        },
+                        seleccionar(c) {
+                            $wire.set('clienteId', String(c.id));
+                            this.busqueda = c.apellido + ', ' + c.nombre;
+                            this.abierto = false;
+                        },
+                        limpiar() {
+                            $wire.set('clienteId', '');
+                            this.busqueda = '';
+                            this.$nextTick(() => this.$refs.input.focus());
+                        }
+                    }"
+                    x-init="
+                        const id = $wire.get('clienteId');
+                        if (id) {
+                            const c = clientes.find(c => String(c.id) === String(id));
+                            if (c) busqueda = c.apellido + ', ' + c.nombre;
+                        }
+                    "
+                    @click.outside="abierto = false"
+                    class="relative"
+                >
                     <label class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
-                    <select
-                        wire:model="clienteId"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 @error('clienteId') border-red-400 @enderror"
+                    <div class="relative">
+                        <input
+                            x-ref="input"
+                            type="text"
+                            x-model="busqueda"
+                            @input="abierto = true"
+                            @focus="abierto = true"
+                            placeholder="Buscar cliente..."
+                            autocomplete="off"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 @error('clienteId') border-red-400 @enderror"
+                        >
+                        <button
+                            type="button"
+                            x-show="busqueda"
+                            @click="limpiar()"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-lg leading-none"
+                        >&times;</button>
+                    </div>
+                    <div
+                        x-show="abierto"
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 -translate-y-1"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto"
                     >
-                        <option value="">— Seleccioná una cliente —</option>
-                        @foreach($clientes as $cliente)
-                            <option value="{{ $cliente->id }}">{{ $cliente->apellido }}, {{ $cliente->nombre }}</option>
-                        @endforeach
-                    </select>
+                        <template x-if="filtrados.length > 0">
+                            <div>
+                                <template x-for="c in filtrados" :key="c.id">
+                                    <div
+                                        @click="seleccionar(c)"
+                                        class="px-3 py-2 text-sm cursor-pointer hover:bg-pink-50 active:bg-pink-100 border-b border-gray-100 last:border-0"
+                                        x-text="c.apellido + ', ' + c.nombre"
+                                    ></div>
+                                </template>
+                            </div>
+                        </template>
+                        <template x-if="filtrados.length === 0">
+                            <div class="px-3 py-2 text-sm text-gray-400">Sin resultados</div>
+                        </template>
+                    </div>
                     @error('clienteId')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
