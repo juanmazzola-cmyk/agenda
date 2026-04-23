@@ -377,26 +377,25 @@ function agendaApp() {
                     await db.turnos.clear(); await db.historial.clear();
 
                     if (datos.clientes?.length) {
-                        await db.clientes.bulkAdd(datos.clientes.map(({ id, celular, telefono, ...c }) => ({
+                        await db.clientes.bulkPut(datos.clientes.map(({ celular, telefono, ...c }) => ({
                             ...c,
-                            telefono: telefono || celular || '',  // soporta ambos nombres
+                            telefono: telefono || celular || '',
                         })));
                     }
 
                     if (datos.tratamientos?.length) {
-                        await db.tratamientos.bulkAdd(datos.tratamientos.map(({ id, ...t }) => t));
+                        await db.tratamientos.bulkPut(datos.tratamientos);
                     }
 
                     if (datos.turnos?.length) {
-                        await db.turnos.bulkAdd(datos.turnos.map(({ id, cobrado, estado, ...t }) => ({
+                        await db.turnos.bulkPut(datos.turnos.map(({ cobrado, estado, ...t }) => ({
                             ...t,
-                            // soporta "cobrado: true/false" y "estado: 'pagado'/'pendiente'"
                             estado: estado || (cobrado ? 'pagado' : 'pendiente'),
                         })));
                     }
 
                     if (datos.historial?.length) {
-                        await db.historial.bulkAdd(datos.historial.map(({ id, ...h }) => h));
+                        await db.historial.bulkPut(datos.historial);
                     }
                 });
                 await this.cargar(); alert('Datos importados correctamente.');
