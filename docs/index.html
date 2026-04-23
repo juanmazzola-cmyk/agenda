@@ -622,6 +622,10 @@
 <script>
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js');
+        // Cuando un SW nuevo toma control, recargar para cargar la versión actualizada
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload();
+        });
     }
 </script>
 </body>
