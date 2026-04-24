@@ -471,7 +471,7 @@
                 <input x-model="formTurno.fecha" type="date" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
             <div><label class="block text-xs font-medium text-gray-600 mb-1">Hora</label>
                 <input x-model="formTurno.hora" type="time" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
-            <div class="relative" @click.outside="dropdownClienteTurno=false"><label class="block text-xs font-medium text-gray-600 mb-1">Cliente</label>
+            <div @click.outside="dropdownClienteTurno=false"><label class="block text-xs font-medium text-gray-600 mb-1">Cliente</label>
                 <div class="relative">
                     <input type="text"
                         x-model="busquedaTurnoCliente"
@@ -485,10 +485,10 @@
                         class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-lg leading-none">&times;</button>
                 </div>
                 <div x-show="dropdownClienteTurno && clientesFiltradosTurno.length"
-                     class="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                     class="mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-sm max-h-36 overflow-y-auto">
                     <template x-for="c in clientesFiltradosTurno" :key="c.id">
                         <div @click="seleccionarClienteTurno(c)"
-                             class="px-3 py-2 text-sm cursor-pointer hover:bg-pink-50 border-b border-gray-100 last:border-0"
+                             class="px-3 py-2.5 text-sm cursor-pointer hover:bg-pink-50 active:bg-pink-100 border-b border-gray-100 last:border-0"
                              x-text="c.nombre + (c.apellido ? ' '+c.apellido : '')"></div>
                     </template>
                 </div>
