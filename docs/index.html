@@ -471,13 +471,28 @@
                 <input x-model="formTurno.fecha" type="date" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
             <div><label class="block text-xs font-medium text-gray-600 mb-1">Hora</label>
                 <input x-model="formTurno.hora" type="time" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
-            <div><label class="block text-xs font-medium text-gray-600 mb-1">Cliente</label>
-                <select x-model="formTurno.clienteId" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
-                    <option value="">— Seleccionar —</option>
-                    <template x-for="c in clientes" :key="c.id">
-                        <option :value="c.id" x-text="`${c.nombre} ${c.apellido||''}`"></option>
+            <div class="relative" @click.outside="dropdownClienteTurno=false"><label class="block text-xs font-medium text-gray-600 mb-1">Cliente</label>
+                <div class="relative">
+                    <input type="text"
+                        x-model="busquedaTurnoCliente"
+                        @input="dropdownClienteTurno=true; formTurno.clienteId=''"
+                        @focus="dropdownClienteTurno=true; $event.target.select()"
+                        placeholder="Buscar cliente..."
+                        autocomplete="off"
+                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
+                    <button type="button" x-show="busquedaTurnoCliente"
+                        @click="busquedaTurnoCliente=''; formTurno.clienteId=''; dropdownClienteTurno=false"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-lg leading-none">&times;</button>
+                </div>
+                <div x-show="dropdownClienteTurno && clientesFiltradosTurno.length"
+                     class="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                    <template x-for="c in clientesFiltradosTurno" :key="c.id">
+                        <div @click="seleccionarClienteTurno(c)"
+                             class="px-3 py-2 text-sm cursor-pointer hover:bg-pink-50 border-b border-gray-100 last:border-0"
+                             x-text="c.nombre + (c.apellido ? ' '+c.apellido : '')"></div>
                     </template>
-                </select></div>
+                </div>
+            </div>
             <div><label class="block text-xs font-medium text-gray-600 mb-1">Tratamiento</label>
                 <select x-model="formTurno.tratamientoId" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                     <option value="">— Seleccionar —</option>
@@ -512,9 +527,9 @@
         <div class="space-y-3">
             <div class="grid grid-cols-2 gap-3">
                 <div><label class="block text-xs font-medium text-gray-600 mb-1">Nombre *</label>
-                    <input x-model="formCliente.nombre" type="text" placeholder="María" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
+                    <input x-model="formCliente.nombre" type="text" placeholder="María" autocapitalize="words" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
                 <div><label class="block text-xs font-medium text-gray-600 mb-1">Apellido</label>
-                    <input x-model="formCliente.apellido" type="text" placeholder="García" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
+                    <input x-model="formCliente.apellido" type="text" placeholder="García" autocapitalize="words" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm capitalize focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
             </div>
             <div><label class="block text-xs font-medium text-gray-600 mb-1">Teléfono</label>
                 <input x-model="formCliente.telefono" type="tel" placeholder="11 1234-5678" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>

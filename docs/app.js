@@ -30,6 +30,8 @@ function agendaApp() {
         modoEdicion: false,
         formTurno: {},
         formCliente: {},
+        busquedaTurnoCliente: '',
+        dropdownClienteTurno: false,
         formTratamiento: {},
 
         // Historial por cliente
@@ -88,6 +90,15 @@ function agendaApp() {
         // ── Calendario ───────────────────────────────────────────────
         get nombreMesVista() { return `${MESES[this.mesVista]} ${this.anioVista}`; },
 
+        get clientesFiltradosTurno() {
+            const q = this.busquedaTurnoCliente.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+            if (!q) return this.clientes.slice(0, 10);
+            return this.clientes.filter(c => {
+                const t = (c.nombre + ' ' + (c.apellido||'')).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+                return t.includes(q);
+            }).slice(0, 10);
+        },
+
         get diasCalendario() {
             const primer = new Date(this.anioVista, this.mesVista, 1);
             const ultimo = new Date(this.anioVista, this.mesVista + 1, 0);
@@ -127,11 +138,22 @@ function agendaApp() {
         abrirNuevoTurno(dia) {
             const fecha = dia ? this.fechaStr(this.anioVista, this.mesVista, dia) : '';
             this.formTurno = { fecha, hora: '09:00', clienteId: '', tratamientoId: '', notas: '', estado: 'pendiente', valor: 0 };
+            this.busquedaTurnoCliente = ''; this.dropdownClienteTurno = false;
             this.modoEdicion = false; this.modalActivo = 'turno';
         },
 
         editarTurno(t) {
-            this.formTurno = { ...t }; this.modoEdicion = true; this.modalActivo = 'turno';
+            this.formTurno = { ...t };
+            const c = this.clientes.find(c => c.id === Number(t.clienteId));
+            this.busquedaTurnoCliente = c ? c.nombre + (c.apellido ? ' '+c.apellido : '') : '';
+            this.dropdownClienteTurno = false;
+            this.modoEdicion = true; this.modalActivo = 'turno';
+        },
+
+        seleccionarClienteTurno(c) {
+            this.formTurno.clienteId = c.id;
+            this.busquedaTurnoCliente = c.nombre + (c.apellido ? ' '+c.apellido : '');
+            this.dropdownClienteTurno = false;
         },
 
         async guardarTurno() {
@@ -184,7 +206,8 @@ function agendaApp() {
 
         async guardarCliente() {
             if (!this.formCliente.nombre) { alert('El nombre es requerido.'); return; }
-            const d = { nombre: this.formCliente.nombre, apellido: this.formCliente.apellido||'',
+            const cap = s => s ? s.replace(/\b\w/g, l => l.toUpperCase()) : '';
+            const d = { nombre: cap(this.formCliente.nombre), apellido: cap(this.formCliente.apellido||''),
                         telefono: this.formCliente.telefono||'', notas: this.formCliente.notas||'' };
             this.formCliente.id ? await db.clientes.update(this.formCliente.id, d) : await db.clientes.add(d);
             await this.cargar(); this.cerrarModal();
