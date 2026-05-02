@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Cliente;
 use App\Models\Configuracion;
+use App\Models\DiaBloqueado;
 use App\Models\Tratamiento;
 use App\Models\Turno;
 use Carbon\Carbon;
@@ -165,6 +166,21 @@ class Agenda extends Component
         $this->eliminarId    = null;
     }
 
+    public function toggleBloqueo(): void
+    {
+        if (! $this->diaSeleccionado) {
+            return;
+        }
+
+        $existente = DiaBloqueado::where('fecha', $this->diaSeleccionado)->first();
+
+        if ($existente) {
+            $existente->delete();
+        } else {
+            DiaBloqueado::create(['fecha' => $this->diaSeleccionado]);
+        }
+    }
+
     public function render()
     {
         $nombresMes = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -184,6 +200,12 @@ class Agenda extends Component
             ->unique()
             ->toArray();
 
+        $fechasBloqueadas = DiaBloqueado::whereYear('fecha', $this->anio)
+            ->whereMonth('fecha', $this->mes)
+            ->pluck('fecha')
+            ->map(fn ($f) => Carbon::parse($f)->format('Y-m-d'))
+            ->toArray();
+
         $dias = array_fill(0, $offset, null);
 
         for ($d = 1; $d <= $diasEnMes; $d++) {
@@ -192,6 +214,7 @@ class Agenda extends Component
                 'numero'      => $d,
                 'fecha'       => $fecha,
                 'tieneTurno'  => in_array($fecha, $fechasConTurno),
+                'bloqueado'   => in_array($fecha, $fechasBloqueadas),
                 'esHoy'       => $fecha === now()->format('Y-m-d'),
                 'seleccionado'=> $fecha === $this->diaSeleccionado,
             ];
@@ -220,6 +243,10 @@ class Agenda extends Component
         $tratamientos = Tratamiento::orderBy('nombre')->get();
         $mensajeWa    = Configuracion::obtener('whatsapp_mensaje', 'Hola {nombre}, te recuerdo tu turno. ¡Hasta pronto! 🌸');
 
+        $diaBloqueado = $this->diaSeleccionado
+            ? DiaBloqueado::where('fecha', $this->diaSeleccionado)->exists()
+            : false;
+
         return view('livewire.agenda', [
             'semanas'       => $semanas,
             'turnosDia'     => $turnosDia,
@@ -228,6 +255,7 @@ class Agenda extends Component
             'nombreMes'     => $nombresMes[$this->mes],
             'diaFormateado' => $diaFormateado,
             'mensajeWa'     => $mensajeWa,
+            'diaBloqueado'  => $diaBloqueado,
         ]);
     }
 }

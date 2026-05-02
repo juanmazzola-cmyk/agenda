@@ -65,6 +65,14 @@
                                         {{ $dia['seleccionado'] ? 'bg-pink-200' : 'bg-pink-500' }}">
                                     </span>
                                 @endif
+                                @if($dia['bloqueado'])
+                                    <span class="absolute inset-0 flex items-center justify-center pointer-events-none rounded-lg overflow-hidden">
+                                        <svg class="w-full h-full {{ $dia['seleccionado'] ? 'text-pink-300' : 'text-red-300' }} opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                                            <line x1="4" y1="4" x2="20" y2="20"/>
+                                            <line x1="20" y1="4" x2="4" y2="20"/>
+                                        </svg>
+                                    </span>
+                                @endif
                             </button>
                         @endif
                     </div>
@@ -81,6 +89,12 @@
                 <span class="flex items-center gap-1.5">
                     <span class="inline-block w-4 h-4 rounded ring-2 ring-pink-400"></span> Hoy
                 </span>
+                <span class="flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-red-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="4" y1="4" x2="20" y2="20"/>
+                        <line x1="20" y1="4" x2="4" y2="20"/>
+                    </svg> Bloqueado
+                </span>
             </div>
 
         </div>
@@ -94,20 +108,43 @@
                 <div>
                     <h2 class="text-base font-bold text-gray-800">Turnos</h2>
                     @if($diaFormateado)
-                        <p class="text-sm text-pink-500 font-medium mt-0.5">{{ $diaFormateado }}</p>
+                        <p class="text-sm font-medium mt-0.5 {{ $diaBloqueado ? 'text-red-400' : 'text-pink-500' }}">
+                            {{ $diaFormateado }}
+                            @if($diaBloqueado)
+                                <span class="text-xs font-normal">· Bloqueado</span>
+                            @endif
+                        </p>
                     @else
                         <p class="text-sm text-gray-400 mt-0.5">Seleccioná un día</p>
                     @endif
                 </div>
-                <button
-                    wire:click="abrirModalNuevo"
-                    class="bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition flex items-center gap-1.5"
-                >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-                    </svg>
-                    Nuevo Turno
-                </button>
+                <div class="flex items-center gap-2">
+                    @if($diaSeleccionado)
+                        <button
+                            wire:click="toggleBloqueo"
+                            title="{{ $diaBloqueado ? 'Desbloquear día' : 'Bloquear día' }}"
+                            class="flex items-center gap-1.5 text-sm font-medium px-3 py-2 rounded-lg transition
+                                {{ $diaBloqueado
+                                    ? 'bg-red-50 text-red-500 hover:bg-red-100'
+                                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}"
+                        >
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <line x1="4" y1="4" x2="20" y2="20"/>
+                                <line x1="20" y1="4" x2="4" y2="20"/>
+                            </svg>
+                            {{ $diaBloqueado ? 'Desbloquear' : 'Bloquear' }}
+                        </button>
+                    @endif
+                    <button
+                        wire:click="abrirModalNuevo"
+                        class="bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition flex items-center gap-1.5"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                        </svg>
+                        Nuevo Turno
+                    </button>
+                </div>
             </div>
 
             {{-- Cards de turnos --}}
