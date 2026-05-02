@@ -66,10 +66,10 @@
                                     </span>
                                 @endif
                                 @if($dia['bloqueado'])
-                                    <span class="absolute inset-0 flex items-center justify-center pointer-events-none rounded-lg overflow-hidden">
-                                        <svg class="w-full h-full {{ $dia['seleccionado'] ? 'text-pink-300' : 'text-red-400' }} opacity-25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
-                                            <line x1="3" y1="3" x2="21" y2="21"/>
-                                            <line x1="21" y1="3" x2="3" y2="21"/>
+                                    <span class="absolute top-0.5 right-0.5 pointer-events-none {{ $dia['seleccionado'] ? 'text-pink-200' : 'text-red-400' }}">
+                                        <svg class="w-3 h-3 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                            <line x1="4" y1="4" x2="20" y2="20"/>
+                                            <line x1="20" y1="4" x2="4" y2="20"/>
                                         </svg>
                                     </span>
                                 @endif
