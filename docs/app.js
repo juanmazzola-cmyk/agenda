@@ -280,9 +280,10 @@ function agendaApp() {
         },
 
         async recargarHistorial() {
-            this.historialItems = await db.historial
+            const items = await db.historial
                 .where('clienteId').equals(this.historialClienteId)
-                .reverse().sortBy('fecha');
+                .toArray();
+            this.historialItems = items.sort((a, b) => b.fecha.localeCompare(a.fecha));
         },
 
         get clienteHistorialActual() {
@@ -362,7 +363,12 @@ function agendaApp() {
 
         formatPrecio(n) { return '$' + Number(n||0).toLocaleString('es-AR'); },
 
-        cerrarModal() { this.modalActivo = null; this.historialClienteId = null; },
+        cerrarModal() {
+            this.modalActivo = null;
+            this.historialClienteId = null;
+            this.busquedaTurnoCliente = '';
+            this.dropdownClienteTurno = false;
+        },
 
         // ── Resumen ──────────────────────────────────────────────────
         get resumenDatos() {
