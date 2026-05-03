@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-_Actualizado: 2026-05-02_
+_Actualizado: 2026-05-02 (sesiones impagadas)_
 
 ## Dos apps independientes — CRÍTICO
 
@@ -61,7 +61,7 @@ Todas las rutas en `routes/web.php` apuntan directamente a componentes Livewire 
 
 No hay autenticación; la app es mono-usuario.
 
-## Modelos y tablas
+## Modelos y tablas (PC)
 
 | Modelo | Tabla | Nota |
 |---|---|---|
@@ -72,6 +72,27 @@ No hay autenticación; la app es mono-usuario.
 | `DiaBloqueado` | `dias_bloqueados` | días sin turnos |
 
 **Importante**: Laravel no pluraliza bien algunos nombres en español. Los modelos con tabla no estándar deben declarar `protected $table` explícitamente (ya lo hacen `Configuracion` y `DiaBloqueado`). Al crear nuevos modelos en español, verificar siempre que la tabla inferida sea correcta.
+
+### Campo `cobrado` vs estado `impaga`
+
+- **PC**: `Turno` tiene `cobrado` (boolean). Un turno es **impago** cuando `cobrado = false` AND `fecha < hoy`. No hay campo `estado` en la tabla.
+- **Celular**: `turnos` en Dexie tienen `estado` ('pendiente' | 'pagado' | **'impaga'**). "Impaga" se selecciona explícitamente en el form.
+- En la lista de clientes, ambas apps muestran "X sesión/es impaga/s" en rojo.
+- En el historial, ambas apps muestran el badge **Impaga** en rojo para esos turnos.
+
+## Datos del celular (Dexie)
+
+Stores de IndexedDB en `docs/app.js`:
+
+| Store | Campos clave | Nota |
+|---|---|---|
+| `clientes` | `++id, nombre` | nombre, apellido, telefono |
+| `tratamientos` | `++id, nombre` | — |
+| `turnos` | `++id, fecha, clienteId, tratamientoId` | estado: 'pendiente'\|'pagado'\|'impaga' |
+| `historial` | `++id, clienteId, fecha` | entradas manuales de historial |
+| `diasBloqueados` | `++id, fecha` | fechas bloqueadas (sin atención) |
+
+Versión actual de Dexie: **v3**. Al agregar stores, crear `db.version(4).stores({...})` con todos los stores.
 
 ## Patrones clave
 
