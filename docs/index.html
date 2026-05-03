@@ -233,7 +233,11 @@
                                     <span class="text-pink-600 font-bold text-xs" x-text="t.hora"></span>
                                 </div>
                                 <div>
-                                    <p class="font-semibold text-gray-800 text-sm" x-text="nombreCliente(t.clienteId)"></p>
+                                    <div class="flex items-center gap-1.5">
+                                        <p class="font-semibold text-gray-800 text-sm" x-text="nombreCliente(t.clienteId)"></p>
+                                        <span x-show="impagasDe(t.clienteId).length > 0" style="display:none"
+                                              class="text-[10px] font-bold text-red-500 bg-red-50 px-1.5 py-0.5 rounded">Impaga</span>
+                                    </div>
                                     <p class="text-xs text-gray-500" x-text="nombreTratamiento(t.tratamientoId)"></p>
                                 </div>
                             </div>
