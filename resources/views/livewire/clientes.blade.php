@@ -70,6 +70,11 @@
                 @else
                     <p class="text-xs text-gray-400 mt-0.5">Sin turnos próximos</p>
                 @endif
+                @if($cliente->impagos_count > 0)
+                    <p class="text-xs text-red-500 font-semibold mt-0.5">
+                        {{ $cliente->impagos_count }} sesión{{ $cliente->impagos_count != 1 ? 'es' : '' }} impaga{{ $cliente->impagos_count != 1 ? 's' : '' }}
+                    </p>
+                @endif
             </div>
 
             {{-- Acciones --}}
@@ -289,6 +294,8 @@
                                 <td class="px-3 py-2 text-center">
                                     @if($turno->cobrado)
                                         <span class="text-green-600 font-medium">✓</span>
+                                    @elseif($turno->fecha->isPast())
+                                        <span class="text-red-500 text-xs font-semibold">Impaga</span>
                                     @else
                                         <span class="text-gray-300">—</span>
                                     @endif

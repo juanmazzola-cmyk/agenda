@@ -295,6 +295,11 @@
                                         <p class="text-[11px] text-pink-500 font-medium mt-0.5"
                                            x-text="'📅 ' + formatFecha(proximoTurnoDeCliente(c.id).fecha) + ' · ' + proximoTurnoDeCliente(c.id).hora"></p>
                                     </template>
+                                    <!-- Impagas -->
+                                    <template x-if="turnos.filter(t => t.clienteId === c.id && t.estado === 'impaga').length > 0">
+                                        <p class="text-[11px] text-red-500 font-semibold mt-0.5"
+                                           x-text="turnos.filter(t => t.clienteId === c.id && t.estado === 'impaga').length + ' sesión' + (turnos.filter(t => t.clienteId === c.id && t.estado === 'impaga').length !== 1 ? 'es' : '') + ' impaga' + (turnos.filter(t => t.clienteId === c.id && t.estado === 'impaga').length !== 1 ? 's' : '')"></p>
+                                    </template>
                                 </div>
                             </div>
                             <!-- Iconos de acción -->
@@ -545,6 +550,7 @@
                 <select x-model="formTurno.estado" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300">
                     <option value="pendiente">Pendiente</option>
                     <option value="pagado">Pagado</option>
+                    <option value="impaga">Impaga</option>
                 </select></div>
             <div><label class="block text-xs font-medium text-gray-600 mb-1">Importe ($)</label>
                 <input type="number" min="0" step="0.01" x-model="formTurno.valor" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"></div>
@@ -620,7 +626,21 @@
 
         <!-- Lista -->
         <div class="flex-1 overflow-y-auto p-4 space-y-2">
-            <div x-show="historialItems.length===0 && !mostrarFormHistorial" class="text-center py-10 text-gray-400 text-sm">
+            <!-- Turnos impagos -->
+            <template x-for="t in turnos.filter(t => t.clienteId === historialClienteId && t.estado === 'impaga').sort((a,b) => b.fecha.localeCompare(a.fecha))" :key="'imp-'+t.id">
+                <div class="bg-red-50 border border-red-100 rounded-2xl p-3.5 flex items-center justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <span class="text-xs font-bold text-gray-700" x-text="formatFecha(t.fecha)"></span>
+                            <span x-show="t.tratamientoId" class="text-xs text-pink-600 font-medium" x-text="nombreTratamiento(t.tratamientoId)"></span>
+                            <span class="text-xs font-bold text-red-500 bg-red-100 px-1.5 py-0.5 rounded">Impaga</span>
+                        </div>
+                        <p class="text-sm font-bold text-red-500 mt-1" x-text="formatPrecio(t.valor)"></p>
+                    </div>
+                </div>
+            </template>
+
+            <div x-show="historialItems.length===0 && !mostrarFormHistorial && turnos.filter(t => t.clienteId === historialClienteId && t.estado === 'impaga').length === 0" class="text-center py-10 text-gray-400 text-sm">
                 Sin entradas todavía
             </div>
             <template x-for="h in historialItems" :key="h.id">

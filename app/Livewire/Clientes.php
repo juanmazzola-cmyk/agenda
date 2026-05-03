@@ -135,6 +135,9 @@ class Clientes extends Component
     public function render()
     {
         $clientes = Cliente::with('proximoTurno')
+            ->withCount(['turnos as impagos_count' => fn ($q) =>
+                $q->whereDate('fecha', '<', now())->where('cobrado', false)
+            ])
             ->where(function ($q) {
                 $q->where('nombre',   'like', "%{$this->buscar}%")
                   ->orWhere('apellido', 'like', "%{$this->buscar}%");
