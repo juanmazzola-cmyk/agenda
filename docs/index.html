@@ -296,9 +296,9 @@
                                            x-text="'📅 ' + formatFecha(proximoTurnoDeCliente(c.id).fecha) + ' · ' + proximoTurnoDeCliente(c.id).hora"></p>
                                     </template>
                                     <!-- Impagas -->
-                                    <template x-if="turnos.filter(t => t.clienteId === c.id && t.estado === 'impaga').length > 0">
+                                    <template x-if="impagasDe(c.id).length > 0">
                                         <p class="text-[11px] text-red-500 font-semibold mt-0.5"
-                                           x-text="turnos.filter(t => t.clienteId === c.id && t.estado === 'impaga').length + ' sesión' + (turnos.filter(t => t.clienteId === c.id && t.estado === 'impaga').length !== 1 ? 'es' : '') + ' impaga' + (turnos.filter(t => t.clienteId === c.id && t.estado === 'impaga').length !== 1 ? 's' : '')"></p>
+                                           x-text="impagasDe(c.id).length + (impagasDe(c.id).length === 1 ? ' sesión impaga' : ' sesiones impagas')"></p>
                                     </template>
                                 </div>
                             </div>
@@ -627,7 +627,7 @@
         <!-- Lista -->
         <div class="flex-1 overflow-y-auto p-4 space-y-2">
             <!-- Turnos impagos -->
-            <template x-for="t in turnos.filter(t => t.clienteId === historialClienteId && t.estado === 'impaga').sort((a,b) => b.fecha.localeCompare(a.fecha))" :key="'imp-'+t.id">
+            <template x-for="t in impagasDe(historialClienteId).sort((a,b) => b.fecha.localeCompare(a.fecha))" :key="'imp-'+t.id">
                 <div class="bg-red-50 border border-red-100 rounded-2xl p-3.5 flex items-center justify-between gap-3">
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-0.5">
@@ -640,7 +640,7 @@
                 </div>
             </template>
 
-            <div x-show="historialItems.length===0 && !mostrarFormHistorial && turnos.filter(t => t.clienteId === historialClienteId && t.estado === 'impaga').length === 0" class="text-center py-10 text-gray-400 text-sm">
+            <div x-show="historialItems.length===0 && !mostrarFormHistorial && impagasDe(historialClienteId).length === 0" class="text-center py-10 text-gray-400 text-sm">
                 Sin entradas todavía
             </div>
             <template x-for="h in historialItems" :key="h.id">

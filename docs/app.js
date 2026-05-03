@@ -121,6 +121,14 @@ function agendaApp() {
             return `${anio}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
         },
 
+        impagasDe(clienteId) {
+            const hoy = new Date().toISOString().slice(0, 10);
+            return this.turnos.filter(t =>
+                t.clienteId === clienteId &&
+                (t.estado === 'impaga' || (t.estado === 'pendiente' && t.fecha < hoy))
+            );
+        },
+
         esBloqueado(dia) {
             if (!dia) return false;
             const f = this.fechaStr(this.anioVista, this.mesVista, dia);
