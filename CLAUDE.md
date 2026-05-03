@@ -4,11 +4,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 _Actualizado: 2026-05-02_
 
+## Dos apps independientes — CRÍTICO
+
+Este repositorio contiene **dos aplicaciones completamente separadas** que deben mantenerse sincronizadas manualmente:
+
+| | App local (PC) | App celular (GitHub Pages) |
+|---|---|---|
+| **Ubicación** | `resources/views/`, `app/` | `docs/` |
+| **Stack** | Laravel + Livewire + MySQL | HTML estático + Alpine.js + Dexie (IndexedDB) |
+| **URL** | `http://localhost/agenda-estetica/public` | `https://juanmazzola-cmyk.github.io/agenda/` |
+| **Datos** | MySQL | localStorage / IndexedDB (Dexie) |
+
+**Cualquier feature nuevo debe implementarse en ambos lados.** Cambios en Blade/PHP no afectan `docs/` y viceversa.
+
+### App celular (`docs/`)
+- `docs/index.html` — toda la UI en Alpine.js
+- `docs/app.js` — lógica y acceso a Dexie
+- `docs/sw.js` — service worker con caché versionado (`agenda-vXX`). **Al modificar `index.html` o `app.js`, incrementar la versión del caché** para forzar actualización en el celular.
+- Dexie gestiona las migraciones de IndexedDB con `.version(N).stores({...})`. Siempre agregar versión nueva al añadir tablas, nunca modificar versiones existentes.
+
 ## Entorno y despliegue
 
 - **Local**: XAMPP en Windows. URL: `http://localhost/agenda-estetica/public`. No usar `php artisan serve`.
-- **Producción**: DonWeb. El push a `main` despliega automáticamente. Hacer commit + push directo sin pedir confirmación.
-- **Base de datos**: MySQL, nombre `agenda_estetica`.
+- **GitHub Pages**: el push a `main` despliega automáticamente `docs/` en `https://juanmazzola-cmyk.github.io/agenda/`.
+- **Base de datos local**: MySQL, nombre `agenda_estetica`.
 
 ## Comandos frecuentes
 
