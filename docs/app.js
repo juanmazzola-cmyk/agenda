@@ -8,6 +8,12 @@ db.version(2).stores({
     turnos: '++id, fecha, clienteId, tratamientoId',
     historial: '++id, clienteId, fecha'
 });
+db.version(3).stores({
+    clientes: '++id, nombre', tratamientos: '++id, nombre',
+    turnos: '++id, fecha, clienteId, tratamientoId',
+    historial: '++id, clienteId, fecha',
+    diasBloqueados: '++id, fecha'
+});
 
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const DIAS  = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
@@ -21,6 +27,7 @@ function agendaApp() {
         tratamientos: [],
         turnos: [],
         historialAll: [],
+        diasBloqueados: [],
 
         mesVista: new Date().getMonth(),
         anioVista: new Date().getFullYear(),
@@ -63,10 +70,11 @@ function agendaApp() {
         },
 
         async cargar() {
-            this.clientes     = await db.clientes.orderBy('nombre').toArray();
-            this.tratamientos = await db.tratamientos.orderBy('nombre').toArray();
-            this.turnos       = await db.turnos.toArray();
-            this.historialAll = await db.historial.orderBy('fecha').reverse().toArray();
+            this.clientes       = await db.clientes.orderBy('nombre').toArray();
+            this.tratamientos   = await db.tratamientos.orderBy('nombre').toArray();
+            this.turnos         = await db.turnos.toArray();
+            this.historialAll   = await db.historial.orderBy('fecha').reverse().toArray();
+            this.diasBloqueados = await db.diasBloqueados.toArray();
         },
 
         // ── Navegación ───────────────────────────────────────────────
@@ -111,6 +119,23 @@ function agendaApp() {
 
         fechaStr(anio, mes, dia) {
             return `${anio}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+        },
+
+        esBloqueado(dia) {
+            if (!dia) return false;
+            const f = this.fechaStr(this.anioVista, this.mesVista, dia);
+            return this.diasBloqueados.some(d => d.fecha === f);
+        },
+
+        async toggleBloqueo(dia) {
+            const f = this.fechaStr(this.anioVista, this.mesVista, dia);
+            const existente = this.diasBloqueados.find(d => d.fecha === f);
+            if (existente) {
+                await db.diasBloqueados.delete(existente.id);
+            } else {
+                await db.diasBloqueados.add({ fecha: f });
+            }
+            await this.cargar();
         },
 
         turnosDia(dia) {
@@ -380,9 +405,10 @@ function agendaApp() {
 
         // ── Backup ───────────────────────────────────────────────────
         async exportar() {
-            const datos = { version:2, exportado: new Date().toISOString(),
+            const datos = { version:3, exportado: new Date().toISOString(),
                             clientes: this.clientes, tratamientos: this.tratamientos,
-                            turnos: this.turnos, historial: this.historialAll };
+                            turnos: this.turnos, historial: this.historialAll,
+                            diasBloqueados: this.diasBloqueados };
             const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
             const url  = URL.createObjectURL(blob);
             const a    = document.createElement('a');
@@ -397,9 +423,10 @@ function agendaApp() {
                 const datos = JSON.parse(await file.text());
                 if (!confirm('Esto reemplazará TODOS los datos actuales. ¿Continuar?')) return;
 
-                await db.transaction('rw', db.clientes, db.tratamientos, db.turnos, db.historial, async () => {
+                await db.transaction('rw', db.clientes, db.tratamientos, db.turnos, db.historial, db.diasBloqueados, async () => {
                     await db.clientes.clear(); await db.tratamientos.clear();
                     await db.turnos.clear(); await db.historial.clear();
+                    await db.diasBloqueados.clear();
 
                     if (datos.clients && datos.appointments !== undefined) {
                         // ── Formato React (clients / appointments / services) ──
@@ -486,6 +513,9 @@ function agendaApp() {
                         }
                         if (datos.historial?.length) {
                             await db.historial.bulkPut(datos.historial);
+                        }
+                        if (datos.diasBloqueados?.length) {
+                            await db.diasBloqueados.bulkPut(datos.diasBloqueados);
                         }
 
                     } else {

@@ -161,8 +161,18 @@
                              'bg-white ring-2 ring-pink-400': dia && esHoy(dia) && diaSeleccionado!==dia,
                              'bg-white hover:bg-pink-50': dia && !esHoy(dia) && diaSeleccionado!==dia,
                          }"
-                         class="rounded-xl p-1.5 cursor-pointer transition min-h-[46px] flex flex-col items-center">
-                        <span class="text-xs font-semibold leading-none mb-1" x-text="dia"></span>
+                         class="relative rounded-xl p-1.5 cursor-pointer transition min-h-[46px] flex flex-col items-center overflow-hidden">
+                        <template x-if="dia && esBloqueado(dia)">
+                            <span class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <svg :class="diaSeleccionado===dia ? 'text-pink-300' : 'text-red-400'"
+                                     class="w-full h-full opacity-25" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                                    <line x1="3" y1="3" x2="21" y2="21"/>
+                                    <line x1="21" y1="3" x2="3" y2="21"/>
+                                </svg>
+                            </span>
+                        </template>
+                        <span class="relative z-10 text-xs font-semibold leading-none mb-1" x-text="dia"></span>
                         <div class="flex flex-wrap justify-center gap-0.5">
                             <template x-for="t in turnosDia(dia).slice(0,3)" :key="t.id">
                                 <span :class="diaSeleccionado===dia?'bg-white/40':'bg-pink-400'" class="w-1.5 h-1.5 rounded-full block"></span>
@@ -180,6 +190,15 @@
                  x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="mt-4">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="font-bold text-gray-800" x-text="`${diaSeleccionado} de ${MESES[mesVista]}`"></h3>
+                    <button @click="toggleBloqueo(diaSeleccionado)"
+                            :class="esBloqueado(diaSeleccionado) ? 'text-red-500 bg-red-50 hover:bg-red-100' : 'text-gray-400 hover:bg-gray-100'"
+                            class="flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-xl transition">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24">
+                            <line x1="3" y1="3" x2="21" y2="21"/>
+                            <line x1="21" y1="3" x2="3" y2="21"/>
+                        </svg>
+                        <span x-text="esBloqueado(diaSeleccionado) ? 'Desbloquear' : 'Bloquear'"></span>
+                    </button>
                 </div>
                 <div x-show="turnosDia(diaSeleccionado).length===0" class="text-center py-8 text-gray-400 text-sm bg-white rounded-2xl">
                     Sin turnos este día
