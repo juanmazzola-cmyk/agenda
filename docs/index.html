@@ -163,7 +163,7 @@
                          }"
                          class="relative rounded-xl p-1.5 cursor-pointer transition min-h-[46px] flex flex-col items-center overflow-hidden">
                         <span x-show="dia && esBloqueado(dia)" style="display:none"
-                              class="absolute inset-0 pointer-events-none">
+                              class="absolute inset-0 flex items-center justify-center pointer-events-none rounded-xl overflow-hidden">
                             <svg :class="diaSeleccionado===dia ? 'text-pink-300' : 'text-red-400'"
                                  class="w-full h-full opacity-25" viewBox="0 0 24 24" fill="none"
                                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
@@ -184,19 +184,41 @@
                 </template>
             </div>
 
+            <!-- Leyenda -->
+            <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                <span class="flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-pink-400 inline-block"></span> Tiene turnos
+                </span>
+                <span class="flex items-center gap-1">
+                    <span class="w-4 h-4 rounded-lg ring-2 ring-pink-400 inline-block"></span> Hoy
+                </span>
+                <span class="flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 text-red-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/>
+                    </svg> Bloqueado
+                </span>
+            </div>
+
             <!-- Panel día -->
             <div x-show="diaSeleccionado !== null" x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="mt-4">
                 <div class="flex items-center justify-between mb-3">
                     <div>
-                        <h3 class="font-bold text-gray-800" x-text="`${diaSeleccionado} de ${MESES[mesVista]}`"></h3>
-                        <p x-show="esBloqueado(diaSeleccionado)" style="display:none"
-                           class="text-xs text-red-500 font-medium mt-0.5">Día bloqueado</p>
+                        <h3 class="font-bold text-gray-800">Turnos</h3>
+                        <p :class="esBloqueado(diaSeleccionado) ? 'text-red-400' : 'text-pink-500'"
+                           class="text-sm font-medium mt-0.5">
+                            <span x-text="`${diaSeleccionado} de ${MESES[mesVista]}`"></span>
+                            <span x-show="esBloqueado(diaSeleccionado)" style="display:none"
+                                  class="text-xs font-normal"> · Bloqueado</span>
+                        </p>
                     </div>
                     <button @click="toggleBloqueo(diaSeleccionado)"
                             :class="esBloqueado(diaSeleccionado) ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'"
-                            class="text-xs font-medium px-3 py-1.5 rounded-xl transition"
-                            x-text="esBloqueado(diaSeleccionado) ? 'Desbloquear día' : 'Bloquear día'">
+                            class="flex items-center gap-1.5 text-sm font-medium px-3 py-2 rounded-lg transition">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/>
+                        </svg>
+                        <span x-text="esBloqueado(diaSeleccionado) ? 'Desbloquear' : 'Bloquear'"></span>
                     </button>
                 </div>
                 <div x-show="turnosDia(diaSeleccionado).length===0" class="text-center py-8 text-gray-400 text-sm bg-white rounded-2xl">
