@@ -218,7 +218,8 @@
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                             <line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/>
                         </svg>
-                        <span x-text="esBloqueado(diaSeleccionado) ? 'Desbloquear' : 'Bloquear'"></span>
+                        <span x-show="esBloqueado(diaSeleccionado)" style="display:none">Desbloquear</span>
+                        <span x-show="!esBloqueado(diaSeleccionado)">Bloquear</span>
                     </button>
                 </div>
                 <div x-show="turnosDia(diaSeleccionado).length===0" class="text-center py-8 text-gray-400 text-sm bg-white rounded-2xl">

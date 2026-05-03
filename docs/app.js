@@ -129,13 +129,17 @@ function agendaApp() {
 
         async toggleBloqueo(dia) {
             const f = this.fechaStr(this.anioVista, this.mesVista, dia);
-            const existente = this.diasBloqueados.find(d => d.fecha === f);
-            if (existente) {
-                await db.diasBloqueados.delete(existente.id);
-            } else {
-                await db.diasBloqueados.add({ fecha: f });
+            try {
+                const existente = this.diasBloqueados.find(d => d.fecha === f);
+                if (existente) {
+                    await db.diasBloqueados.delete(existente.id);
+                } else {
+                    await db.diasBloqueados.add({ fecha: f });
+                }
+                await this.cargar();
+            } catch(err) {
+                alert('Error al bloquear: ' + err.message);
             }
-            await this.cargar();
         },
 
         turnosDia(dia) {
