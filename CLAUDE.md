@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-_Actualizado: 2026-05-02 (sesiones impagadas)_
+_Actualizado: 2026-05-02_
 
 ## Dos apps independientes — CRÍTICO
 
@@ -15,7 +15,7 @@ Este repositorio contiene **dos aplicaciones completamente separadas** que deben
 | **URL** | `http://localhost/agenda-estetica/public` | `https://juanmazzola-cmyk.github.io/agenda/` |
 | **Datos** | MySQL | localStorage / IndexedDB (Dexie) |
 
-**Cualquier feature nuevo debe implementarse en ambos lados.** Cambios en Blade/PHP no afectan `docs/` y viceversa.
+**Los nuevos features se implementan solo en `docs/` (celular).** La app Laravel/localhost es secundaria y solo se toca si se pide explícitamente.
 
 ### App celular (`docs/`)
 - `docs/index.html` — toda la UI en Alpine.js
@@ -73,12 +73,13 @@ No hay autenticación; la app es mono-usuario.
 
 **Importante**: Laravel no pluraliza bien algunos nombres en español. Los modelos con tabla no estándar deben declarar `protected $table` explícitamente (ya lo hacen `Configuracion` y `DiaBloqueado`). Al crear nuevos modelos en español, verificar siempre que la tabla inferida sea correcta.
 
-### Campo `cobrado` vs estado `impaga`
+### Sesiones impagadas (celular)
 
-- **PC**: `Turno` tiene `cobrado` (boolean). Un turno es **impago** cuando `cobrado = false` AND `fecha < hoy`. No hay campo `estado` en la tabla.
-- **Celular**: `turnos` en Dexie tienen `estado` ('pendiente' | 'pagado' | **'impaga'**). "Impaga" se selecciona explícitamente en el form.
-- En la lista de clientes, ambas apps muestran "X sesión/es impaga/s" en rojo.
-- En el historial, ambas apps muestran el badge **Impaga** en rojo para esos turnos.
+- `estado` del turno: `'pendiente'` | `'pagado'` | `'impaga'`
+- Un turno se considera impago si `estado === 'impaga'` O si `estado === 'pendiente'` y `fecha < hoy` (detección automática, método `impagasDe(clienteId)` en `app.js`)
+- **Lista de clientes**: badge rojo "X sesión/es impaga/s"
+- **Panel del día (grilla)**: badge rojo "Impaga" al lado del nombre en la tarjeta del turno
+- **Historial del cliente**: sección en rojo con los turnos impagos al inicio
 
 ## Datos del celular (Dexie)
 
@@ -94,7 +95,17 @@ Stores de IndexedDB en `docs/app.js`:
 
 Versión actual de Dexie: **v3**. Al agregar stores, crear `db.version(4).stores({...})` con todos los stores.
 
-## Patrones clave
+## Patrones clave (celular)
+
+**`impagasDe(clienteId)`** — detecta turnos impagos: `estado === 'impaga'` OR (`estado === 'pendiente'` AND `fecha < hoy`). Usado en lista de clientes, panel del día e historial.
+
+**Días bloqueados** — `diasBloqueados` store en Dexie. En el calendario se muestra una X SVG absoluta sobre el día. El botón Bloquear/Desbloquear aparece en el panel al seleccionar un día. Método `toggleBloqueo(dia)` en `app.js`.
+
+**Historial** — `recargarHistorial()` usa `.toArray()` + `.sort()` en JS (NO `.reverse().sortBy()` de Dexie, que no funciona correctamente). Los turnos impagos del cliente se muestran al inicio del historial como sección separada.
+
+**`cerrarModal()`** — limpia `modalActivo`, `historialClienteId`, `busquedaTurnoCliente` y `dropdownClienteTurno`.
+
+## Patrones clave (PC Laravel)
 
 **Configuracion** funciona como un key-value store:
 ```php
@@ -102,12 +113,10 @@ Configuracion::obtener('clave', 'valor_default');
 Configuracion::establecer('clave', 'valor');
 ```
 
-**Agenda**: el componente más complejo. En `render()` construye el grid del calendario mes a mes, consulta `fechasConTurno` y `fechasBloqueadas` para ese mes, y pasa los turnos del día seleccionado. El estado vive en `$anio`, `$mes`, `$diaSeleccionado`.
+**Agenda**: en `render()` construye el grid del calendario mes a mes, consulta `fechasConTurno` y `fechasBloqueadas` para ese mes. El estado vive en `$anio`, `$mes`, `$diaSeleccionado`.
 
-**Alpine.js + Livewire**: el buscador de clientes en el modal de turno es Alpine puro (filtrado client-side), que sincroniza con Livewire vía `$wire.set('clienteId', ...)`. Este patrón evita round-trips al servidor en cada keystroke.
+**Alpine.js + Livewire**: el buscador de clientes en el modal de turno es Alpine puro, sincroniza con Livewire vía `$wire.set('clienteId', ...)`.
 
-**Días bloqueados**: `DiaBloqueado` marca fechas sin atención. En el calendario se muestra una X SVG absoluta sobre el día, con el número encima usando `z-10`. El botón Bloquear/Desbloquear aparece en el panel de turnos al seleccionar un día.
-
-## Assets
+## Assets (PC)
 
 Después de cambios en CSS/JS, correr `npm run build` antes del deploy. Los assets compilados van a `public/build/`.
