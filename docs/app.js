@@ -126,8 +126,9 @@ function agendaApp() {
         },
 
         impagasDe(clienteId) {
+            const hoy = this.hoy;
             return this.turnos.filter(t =>
-                t.clienteId === clienteId && t.estado === 'impaga'
+                t.clienteId === clienteId && t.estado === 'impaga' && t.fecha < hoy
             );
         },
 
