@@ -237,9 +237,8 @@
                                               class="text-[10px] font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">Deuda</span>
                                     </div>
                                     <p class="text-xs text-gray-500" x-text="nombreTratamiento(t.tratamientoId)"></p>
-                                    <p :style="{display: getBadgeTurno(t) === 'deuda' ? 'block' : 'none'}"
-                                       class="text-[10px] text-orange-400 font-medium mt-0.5"
-                                       x-text="'No pagó: ' + fechasImpagaDe(t.clienteId).join(', ')"></p>
+                                    <p class="text-[10px] text-orange-400 font-medium mt-0.5"
+                                       x-text="deudaFechasTexto(t)"></p>
                                 </div>
                             </div>
                             <div class="flex gap-1 flex-shrink-0">

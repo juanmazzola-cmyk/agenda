@@ -139,6 +139,23 @@ function agendaApp() {
                 .map(t => this.formatFecha(t.fecha));
         },
 
+        deudaFechasTexto(t) {
+            const hoy = this.hoy;
+            if (t.fecha <= hoy) return '';
+            const impagos = this.turnos.filter(x =>
+                x.clienteId === t.clienteId && x.estado === 'impaga' && x.fecha < hoy
+            );
+            if (!impagos.length) return '';
+            const proximo = this.turnos
+                .filter(x => x.clienteId === t.clienteId && x.fecha > hoy)
+                .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))[0];
+            if (!proximo || proximo.id !== t.id) return '';
+            return 'No pagó: ' + impagos
+                .sort((a, b) => b.fecha.localeCompare(a.fecha))
+                .map(x => this.formatFecha(x.fecha))
+                .join(', ');
+        },
+
         getBadgeTurno(t) {
             const hoy = this.hoy;
             if (t.estado === 'impaga' && t.fecha < hoy) return 'impaga';
