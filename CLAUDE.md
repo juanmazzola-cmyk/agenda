@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-_Actualizado: 2026-05-02_
+_Actualizado: 2026-05-04_
 
 ## Dos apps independientes — CRÍTICO
 
@@ -75,11 +75,11 @@ No hay autenticación; la app es mono-usuario.
 
 ### Sesiones impagadas (celular)
 
-- `estado` del turno: `'pendiente'` | `'pagado'` | `'impaga'`
-- Un turno se considera impago si `estado === 'impaga'` O si `estado === 'pendiente'` y `fecha < hoy` (detección automática, método `impagasDe(clienteId)` en `app.js`)
-- **Lista de clientes**: badge rojo "X sesión/es impaga/s"
-- **Panel del día (grilla)**: badge rojo "Impaga" al lado del nombre en la tarjeta del turno
-- **Historial del cliente**: sección en rojo con los turnos impagos al inicio
+- `estado` del turno: `'pagado'` | `'impaga'` (el estado `'pendiente'` fue eliminado)
+- Un turno pasado impago tiene `estado === 'impaga'` y `fecha < hoy`
+- **Lista de clientes**: badge rojo "X sesión/es impaga/s" — método `impagasDe(clienteId)`
+- **Panel del día (grilla)**: badge rojo "Impaga" en el turno pasado no cobrado; badge naranja "Deuda" + fecha(s) en el próximo turno futuro del cliente si tiene deuda anterior — métodos `getBadgeTurno(t)` y `deudaFechasTexto(t)`
+- **Historial del cliente**: muestra todos los turnos (pasados sombreados, futuros destacados) con estado, notas e importe
 
 ## Datos del celular (Dexie)
 
@@ -89,7 +89,7 @@ Stores de IndexedDB en `docs/app.js`:
 |---|---|---|
 | `clientes` | `++id, nombre` | nombre, apellido, telefono |
 | `tratamientos` | `++id, nombre` | — |
-| `turnos` | `++id, fecha, clienteId, tratamientoId` | estado: 'pendiente'\|'pagado'\|'impaga' |
+| `turnos` | `++id, fecha, clienteId, tratamientoId` | estado: 'pagado'\|'impaga'; campos: fecha, hora, clienteId, tratamientoId, notas, estado, valor |
 | `historial` | `++id, clienteId, fecha` | entradas manuales de historial |
 | `diasBloqueados` | `++id, fecha` | fechas bloqueadas (sin atención) |
 
@@ -97,13 +97,21 @@ Versión actual de Dexie: **v3**. Al agregar stores, crear `db.version(4).stores
 
 ## Patrones clave (celular)
 
-**`impagasDe(clienteId)`** — detecta turnos impagos: `estado === 'impaga'` OR (`estado === 'pendiente'` AND `fecha < hoy`). Usado en lista de clientes, panel del día e historial.
+**`impagasDe(clienteId)`** — devuelve turnos con `estado === 'impaga'`. Usado en lista de clientes para el badge de deuda.
+
+**`getBadgeTurno(t)`** — retorna `'impaga'` si el turno es pasado con `estado === 'impaga'`; retorna `'deuda'` si es el próximo turno futuro del cliente y tiene deuda anterior; retorna `null` en cualquier otro caso.
+
+**`deudaFechasTexto(t)`** — retorna el string `'No pagó: DD/MM/AAAA, ...'` para el badge Deuda, o `''` si no aplica. Se usa con `x-text` directo (sin condicional de display) para evitar inconsistencias de Alpine dentro de `x-for`.
+
+**Alpine.js dentro de `x-for`** — patrón confiable para visibilidad condicional: usar `:style="{display: metodo(t) === 'valor' ? 'inline' : 'none'}"` con objeto (NO string). `x-show` e `x-if` son poco confiables dentro de `x-for`. Para contenido de texto condicional, preferir un método que retorne `''` y usar `x-text` directo.
 
 **Días bloqueados** — `diasBloqueados` store en Dexie. En el calendario se muestra una X SVG absoluta sobre el día. El botón Bloquear/Desbloquear aparece en el panel al seleccionar un día. Método `toggleBloqueo(dia)` en `app.js`.
 
-**Historial** — `recargarHistorial()` usa `.toArray()` + `.sort()` en JS (NO `.reverse().sortBy()` de Dexie, que no funciona correctamente). Los turnos impagos del cliente se muestran al inicio del historial como sección separada.
+**Historial** — `recargarHistorial()` usa `.toArray()` + `.sort()` en JS (NO `.reverse().sortBy()` de Dexie, que no funciona correctamente). Muestra todos los turnos del cliente (pasados y futuros).
 
 **`cerrarModal()`** — limpia `modalActivo`, `historialClienteId`, `busquedaTurnoCliente` y `dropdownClienteTurno`.
+
+**Backup / Export** — `exportar()` usa `navigator.share()` con File API en iOS/Android (abre el share sheet nativo); fallback a `<a download>` con blob URL en desktop. `URL.revokeObjectURL` se llama con `setTimeout(1000)` para evitar cancelar la descarga. El import maneja dos formatos: nuestro formato (`clientes`/`turnos`) y un formato React legacy (`clients`/`appointments`).
 
 ## Patrones clave (PC Laravel)
 
