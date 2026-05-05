@@ -131,22 +131,24 @@ function agendaApp() {
             );
         },
 
-        proximoTurnoConDeudaId(clienteId) {
-            const tieneDeuda = this.turnos.some(t =>
-                t.clienteId === clienteId && t.estado === 'impaga' && t.fecha < this.hoy
+        get badgesPorTurno() {
+            const hoy = this.hoy;
+            const badges = {};
+            const clientesConDeuda = new Set(
+                this.turnos
+                    .filter(t => t.estado === 'impaga' && t.fecha < hoy)
+                    .map(t => t.clienteId)
             );
-            if (!tieneDeuda) return null;
-            const proximo = this.turnos
-                .filter(t => t.clienteId === clienteId && t.fecha > this.hoy)
-                .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))[0];
-            return proximo ? proximo.id : null;
-        },
-
-        badgeTurnoDia(t) {
-            if (t.estado === 'impaga' && t.fecha < this.hoy) return 'impaga';
-            const deudaId = this.proximoTurnoConDeudaId(t.clienteId);
-            if (deudaId !== null && t.id === deudaId) return 'deuda';
-            return null;
+            this.turnos.forEach(t => {
+                if (t.estado === 'impaga' && t.fecha < hoy) badges[t.id] = 'impaga';
+            });
+            clientesConDeuda.forEach(clienteId => {
+                const proximo = this.turnos
+                    .filter(t => t.clienteId === clienteId && t.fecha > hoy)
+                    .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))[0];
+                if (proximo) badges[proximo.id] = 'deuda';
+            });
+            return badges;
         },
 
         esBloqueado(dia) {
