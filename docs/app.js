@@ -284,12 +284,25 @@ function agendaApp() {
             this.historialItems = items.sort((a, b) => b.fecha.localeCompare(a.fecha));
         },
 
+        get hoy() {
+            return new Date().toISOString().slice(0, 10);
+        },
+
+        get turnosClienteHistorial() {
+            if (!this.historialClienteId) return [];
+            return this.turnos
+                .filter(t => t.clienteId === this.historialClienteId)
+                .sort((a, b) => b.fecha.localeCompare(a.fecha) || b.hora.localeCompare(a.hora));
+        },
+
         get clienteHistorialActual() {
             return this.clientes.find(c => c.id === this.historialClienteId) || null;
         },
 
         get historialTotal() {
-            return this.historialItems.reduce((s, h) => s + Number(h.importe||0), 0);
+            return this.turnosClienteHistorial
+                .filter(t => t.estado === 'pagado')
+                .reduce((s, t) => s + Number(t.valor||0), 0);
         },
 
         abrirFormHistorial() {
