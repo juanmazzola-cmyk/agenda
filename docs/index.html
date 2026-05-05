@@ -646,12 +646,10 @@
                         <span class="text-xs text-pink-600 font-medium" x-text="nombreTratamiento(t.tratamientoId)"></span>
                     </div>
                     <div class="flex items-center gap-2 flex-wrap">
-                        <template x-if="t.fecha <= hoy">
-                            <button type="button" @click="toggleEstadoTurno(t.id)"
-                                    class="text-[10px] font-bold px-1.5 py-0.5 rounded active:opacity-70"
-                                    :class="t.estado === 'pagado' ? 'text-green-600 bg-green-100' : 'text-red-500 bg-red-50'"
-                                    x-text="t.estado === 'pagado' ? 'Pagada' : 'Impaga'"></button>
-                        </template>
+                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                              :style="{display: t.fecha <= hoy ? 'inline' : 'none'}"
+                              :class="t.estado === 'pagado' ? 'text-green-600 bg-green-100' : 'text-red-500 bg-red-50'"
+                              x-text="t.estado === 'pagado' ? 'Pagada' : 'Impaga'"></span>
                         <template x-if="t.fecha < hoy && Number(t.valor) > 0">
                             <span class="text-sm font-bold"
                                   :class="t.estado === 'pagado' ? 'text-green-600' : 'text-red-500'"
