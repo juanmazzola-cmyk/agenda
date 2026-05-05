@@ -173,7 +173,7 @@
                         </span>
                         <span class="relative z-10 text-xs font-semibold leading-none mb-1" x-text="dia"></span>
                         <div class="flex justify-center">
-                            <span x-show="turnosDia(dia).length > 0"
+                            <span x-show="turnosDia(dia).some(t => t.estado === 'impaga')"
                                   :class="diaSeleccionado===dia?'bg-white/40':'bg-pink-400'"
                                   class="w-1.5 h-1.5 rounded-full block"></span>
                         </div>
@@ -643,12 +643,16 @@
                         <span class="text-xs text-pink-600 font-medium" x-text="nombreTratamiento(t.tratamientoId)"></span>
                     </div>
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded"
-                              :class="t.estado === 'pagado' ? 'text-green-600 bg-green-100' : 'text-red-500 bg-red-50'"
-                              x-text="t.estado === 'pagado' ? 'Pagada' : 'Impaga'"></span>
-                        <span x-show="t.estado === 'pagado' && Number(t.valor) > 0" style="display:none"
-                              class="text-sm font-bold text-green-600"
-                              x-text="formatPrecio(t.valor)"></span>
+                        <template x-if="t.fecha < hoy || t.estado === 'pagado'">
+                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                                  :class="t.estado === 'pagado' ? 'text-green-600 bg-green-100' : 'text-red-500 bg-red-50'"
+                                  x-text="t.estado === 'pagado' ? 'Pagada' : 'Impaga'"></span>
+                        </template>
+                        <template x-if="t.fecha < hoy && Number(t.valor) > 0">
+                            <span class="text-sm font-bold"
+                                  :class="t.estado === 'pagado' ? 'text-green-600' : 'text-red-500'"
+                                  x-text="formatPrecio(t.valor)"></span>
+                        </template>
                     </div>
                     <p x-show="t.notas" class="text-xs text-gray-400 mt-1 italic" x-text="t.notas"></p>
                 </div>
