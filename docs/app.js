@@ -570,7 +570,7 @@ function agendaApp() {
                                     fecha:  a.date,
                                     hora:   a.time,
                                     notas:  a.notes || '',
-                                    estado: a.date < hoy ? 'pagado' : 'impaga',
+                                    estado: a.date <= hoy ? 'pagado' : 'pagado',
                                     valor:  a.price || 0,
                                 }))
                             );

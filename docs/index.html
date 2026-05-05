@@ -646,7 +646,7 @@
                         <span class="text-xs text-pink-600 font-medium" x-text="nombreTratamiento(t.tratamientoId)"></span>
                     </div>
                     <div class="flex items-center gap-2 flex-wrap">
-                        <template x-if="t.fecha < hoy || t.estado === 'pagado'">
+                        <template x-if="t.fecha <= hoy">
                             <span class="text-[10px] font-bold px-1.5 py-0.5 rounded"
                                   :class="t.estado === 'pagado' ? 'text-green-600 bg-green-100' : 'text-red-500 bg-red-50'"
                                   x-text="t.estado === 'pagado' ? 'Pagada' : 'Impaga'"></span>
