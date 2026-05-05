@@ -131,24 +131,21 @@ function agendaApp() {
             );
         },
 
-        get badgesPorTurno() {
+        getBadgeTurno(t) {
             const hoy = this.hoy;
-            const badges = {};
-            const clientesConDeuda = new Set(
-                this.turnos
-                    .filter(t => t.estado === 'impaga' && t.fecha < hoy)
-                    .map(t => t.clienteId)
-            );
-            this.turnos.forEach(t => {
-                if (t.estado === 'impaga' && t.fecha < hoy) badges[t.id] = 'impaga';
-            });
-            clientesConDeuda.forEach(clienteId => {
-                const proximo = this.turnos
-                    .filter(t => t.clienteId === clienteId && t.fecha > hoy)
-                    .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))[0];
-                if (proximo) badges[proximo.id] = 'deuda';
-            });
-            return badges;
+            if (t.estado === 'impaga' && t.fecha < hoy) return 'impaga';
+            if (t.fecha > hoy) {
+                const tieneDeuda = this.turnos.some(x =>
+                    x.clienteId === t.clienteId && x.estado === 'impaga' && x.fecha < hoy
+                );
+                if (tieneDeuda) {
+                    const proximo = this.turnos
+                        .filter(x => x.clienteId === t.clienteId && x.fecha > hoy)
+                        .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))[0];
+                    if (proximo && proximo.id === t.id) return 'deuda';
+                }
+            }
+            return null;
         },
 
         esBloqueado(dia) {

@@ -231,12 +231,10 @@
                                 <div>
                                     <div class="flex items-center gap-1.5">
                                         <p class="font-semibold text-gray-800 text-sm" x-text="nombreCliente(t.clienteId)"></p>
-                                        <template x-if="badgesPorTurno[t.id] === 'impaga'">
-                                            <span class="text-[10px] font-bold text-red-500 bg-red-50 px-1.5 py-0.5 rounded">Impaga</span>
-                                        </template>
-                                        <template x-if="badgesPorTurno[t.id] === 'deuda'">
-                                            <span class="text-[10px] font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">Deuda</span>
-                                        </template>
+                                        <span :style="getBadgeTurno(t) !== 'impaga' ? 'display:none' : ''"
+                                              class="text-[10px] font-bold text-red-500 bg-red-50 px-1.5 py-0.5 rounded">Impaga</span>
+                                        <span :style="getBadgeTurno(t) !== 'deuda' ? 'display:none' : ''"
+                                              class="text-[10px] font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">Deuda</span>
                                     </div>
                                     <p class="text-xs text-gray-500" x-text="nombreTratamiento(t.tratamientoId)"></p>
                                 </div>
