@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-_Actualizado: 2026-05-04_
+_Actualizado: 2026-05-05_
 
 ## Dos apps independientes — CRÍTICO
 
@@ -77,9 +77,10 @@ No hay autenticación; la app es mono-usuario.
 
 - `estado` del turno: `'pagado'` | `'impaga'` (el estado `'pendiente'` fue eliminado)
 - Un turno pasado impago tiene `estado === 'impaga'` y `fecha < hoy`
-- **Lista de clientes**: badge rojo "X sesión/es impaga/s" — método `impagasDe(clienteId)`
+- Los turnos **futuros** nunca muestran estado de pago en ninguna vista, aunque tengan `estado === 'impaga'` en la DB
+- **Lista de clientes**: badge rojo "X sesión/es impaga/s" — método `impagasDe(clienteId)`, que filtra solo `fecha < hoy`
 - **Panel del día (grilla)**: badge rojo "Impaga" en el turno pasado no cobrado; badge naranja "Deuda" + fecha(s) en el próximo turno futuro del cliente si tiene deuda anterior — métodos `getBadgeTurno(t)` y `deudaFechasTexto(t)`
-- **Historial del cliente**: muestra todos los turnos (pasados sombreados, futuros destacados) con estado, notas e importe
+- **Historial del cliente**: muestra todos los turnos (pasados sombreados, futuros destacados); el badge Pagada/Impaga solo aparece si `fecha <= hoy`, usando `:style` (NO `x-if`)
 
 ## Datos del celular (Dexie)
 
@@ -97,7 +98,7 @@ Versión actual de Dexie: **v3**. Al agregar stores, crear `db.version(4).stores
 
 ## Patrones clave (celular)
 
-**`impagasDe(clienteId)`** — devuelve turnos con `estado === 'impaga'`. Usado en lista de clientes para el badge de deuda.
+**`impagasDe(clienteId)`** — devuelve turnos con `estado === 'impaga'` **y `fecha < hoy`** (solo pasados). Usado en lista de clientes para el badge de deuda. Los turnos futuros se excluyen aunque estén marcados como 'impaga' en la DB.
 
 **`getBadgeTurno(t)`** — retorna `'impaga'` si el turno es pasado con `estado === 'impaga'`; retorna `'deuda'` si es el próximo turno futuro del cliente y tiene deuda anterior; retorna `null` en cualquier otro caso.
 
@@ -111,7 +112,7 @@ Versión actual de Dexie: **v3**. Al agregar stores, crear `db.version(4).stores
 
 **`cerrarModal()`** — limpia `modalActivo`, `historialClienteId`, `busquedaTurnoCliente` y `dropdownClienteTurno`.
 
-**Backup / Export** — `exportar()` usa `navigator.share()` con File API en iOS/Android (abre el share sheet nativo); fallback a `<a download>` con blob URL en desktop. `URL.revokeObjectURL` se llama con `setTimeout(1000)` para evitar cancelar la descarga. El import maneja dos formatos: nuestro formato (`clientes`/`turnos`) y un formato React legacy (`clients`/`appointments`).
+**Backup / Export** — `exportar()` usa `navigator.share()` con File API en iOS/Android (abre el share sheet nativo); fallback a `<a download>` con blob URL en desktop. `URL.revokeObjectURL` se llama con `setTimeout(1000)` para evitar cancelar la descarga. El import maneja dos formatos: nuestro formato (`clientes`/`turnos`) y un formato React legacy (`clients`/`appointments`). Al importar formato React, todos los turnos se guardan como `'pagado'` (los futuros no tienen estado de pago real aún).
 
 ## Patrones clave (PC Laravel)
 
