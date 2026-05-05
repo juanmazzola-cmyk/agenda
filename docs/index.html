@@ -231,9 +231,9 @@
                                 <div>
                                     <div class="flex items-center gap-1.5">
                                         <p class="font-semibold text-gray-800 text-sm" x-text="nombreCliente(t.clienteId)"></p>
-                                        <span x-show="t.estado === 'impaga' && t.fecha < hoy" style="display:none"
+                                        <span :class="{'hidden': !(t.estado === 'impaga' && t.fecha < hoy)}"
                                               class="text-[10px] font-bold text-red-500 bg-red-50 px-1.5 py-0.5 rounded">Impaga</span>
-                                        <span x-show="t.id === proximoTurnoConDeudaId(t.clienteId)" style="display:none"
+                                        <span :class="{'hidden': t.id !== proximoTurnoConDeudaId(t.clienteId)}"
                                               class="text-[10px] font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">Deuda</span>
                                     </div>
                                     <p class="text-xs text-gray-500" x-text="nombreTratamiento(t.tratamientoId)"></p>
