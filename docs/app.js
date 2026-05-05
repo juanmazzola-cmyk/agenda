@@ -131,6 +131,14 @@ function agendaApp() {
             );
         },
 
+        fechasImpagaDe(clienteId) {
+            const hoy = this.hoy;
+            return this.turnos
+                .filter(t => t.clienteId === clienteId && t.estado === 'impaga' && t.fecha < hoy)
+                .sort((a, b) => b.fecha.localeCompare(a.fecha))
+                .map(t => this.formatFecha(t.fecha));
+        },
+
         getBadgeTurno(t) {
             const hoy = this.hoy;
             if (t.estado === 'impaga' && t.fecha < hoy) return 'impaga';
