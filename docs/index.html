@@ -172,13 +172,10 @@
                             </svg>
                         </span>
                         <span class="relative z-10 text-xs font-semibold leading-none mb-1" x-text="dia"></span>
-                        <div class="flex flex-wrap justify-center gap-0.5">
-                            <template x-for="t in turnosDia(dia).slice(0,3)" :key="t.id">
-                                <span :class="diaSeleccionado===dia?'bg-white/40':'bg-pink-400'" class="w-1.5 h-1.5 rounded-full block"></span>
-                            </template>
-                            <template x-if="turnosDia(dia).length > 3">
-                                <span :class="diaSeleccionado===dia?'text-white/80':'text-pink-400'" class="text-[9px] font-bold" x-text="'+' + (turnosDia(dia).length - 3)"></span>
-                            </template>
+                        <div class="flex justify-center">
+                            <span x-show="turnosDia(dia).length > 0"
+                                  :class="diaSeleccionado===dia?'bg-white/40':'bg-pink-400'"
+                                  class="w-1.5 h-1.5 rounded-full block"></span>
                         </div>
                     </div>
                 </template>
