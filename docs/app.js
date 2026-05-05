@@ -122,10 +122,8 @@ function agendaApp() {
         },
 
         impagasDe(clienteId) {
-            const hoy = new Date().toISOString().slice(0, 10);
             return this.turnos.filter(t =>
-                t.clienteId === clienteId &&
-                (t.estado === 'impaga' || (t.estado === 'pendiente' && t.fecha < hoy))
+                t.clienteId === clienteId && t.estado === 'impaga'
             );
         },
 
@@ -174,7 +172,7 @@ function agendaApp() {
         // ── Turnos ───────────────────────────────────────────────────
         abrirNuevoTurno(dia) {
             const fecha = dia ? this.fechaStr(this.anioVista, this.mesVista, dia) : '';
-            this.formTurno = { fecha, hora: '09:00', clienteId: '', tratamientoId: '', notas: '', estado: 'pendiente', valor: 0 };
+            this.formTurno = { fecha, hora: '09:00', clienteId: '', tratamientoId: '', notas: '', estado: 'impaga', valor: 0 };
             this.busquedaTurnoCliente = ''; this.dropdownClienteTurno = false;
             this.modoEdicion = false; this.modalActivo = 'turno';
         },
@@ -202,7 +200,7 @@ function agendaApp() {
                 clienteId: Number(this.formTurno.clienteId),
                 tratamientoId: Number(this.formTurno.tratamientoId),
                 notas: this.formTurno.notas || '',
-                estado: this.formTurno.estado || 'pendiente',
+                estado: this.formTurno.estado || 'impaga',
                 valor: Number(this.formTurno.valor) || 0,
             };
             this.formTurno.id ? await db.turnos.update(this.formTurno.id, d) : await db.turnos.add(d);
@@ -487,7 +485,7 @@ function agendaApp() {
                                     fecha:  a.date,
                                     hora:   a.time,
                                     notas:  a.notes || '',
-                                    estado: a.date < hoy ? 'pagado' : 'pendiente',
+                                    estado: a.date < hoy ? 'pagado' : 'impaga',
                                     valor:  a.price || 0,
                                 }))
                             );
@@ -526,7 +524,7 @@ function agendaApp() {
                         if (datos.turnos?.length) {
                             await db.turnos.bulkPut(datos.turnos.map(({ cobrado, estado, ...t }) => ({
                                 ...t,
-                                estado: estado || (cobrado ? 'pagado' : 'pendiente'),
+                                estado: estado === 'pendiente' ? 'impaga' : (estado || (cobrado ? 'pagado' : 'impaga')),
                             })));
                         }
                         if (datos.historial?.length) {
