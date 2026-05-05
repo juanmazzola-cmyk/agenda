@@ -300,10 +300,9 @@
                                            x-text="'📅 ' + formatFecha(proximoTurnoDeCliente(c.id).fecha) + ' · ' + proximoTurnoDeCliente(c.id).hora"></p>
                                     </template>
                                     <!-- Impagas -->
-                                    <template x-if="impagasDe(c.id).length > 0">
-                                        <p class="text-[11px] text-red-500 font-semibold mt-0.5"
-                                           x-text="impagasDe(c.id).length + (impagasDe(c.id).length === 1 ? ' sesión impaga' : ' sesiones impagas')"></p>
-                                    </template>
+                                    <p class="text-[11px] text-red-500 font-semibold mt-0.5"
+                                       :style="{display: impagasDe(c.id).length > 0 ? '' : 'none'}"
+                                       x-text="impagasDe(c.id).length + (impagasDe(c.id).length === 1 ? ' sesión impaga' : ' sesiones impagas')"></p>
                                 </div>
                             </div>
                             <!-- Iconos de acción -->
