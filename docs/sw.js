@@ -1,4 +1,4 @@
-const CACHE = 'agenda-v44';
+const CACHE = 'agenda-v45';
 const STATIC = ['./manifest.json', './icon-192.png', './icon-512.png'];
 const DYNAMIC = ['./', './index.html', './app.js'];
 

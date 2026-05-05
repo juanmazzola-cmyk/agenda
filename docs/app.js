@@ -258,6 +258,14 @@ function agendaApp() {
             await db.turnos.delete(id); await this.cargar();
         },
 
+        async toggleEstadoTurno(id) {
+            const t = this.turnos.find(x => x.id === id);
+            if (!t) return;
+            const nuevoEstado = t.estado === 'pagado' ? 'impaga' : 'pagado';
+            await db.turnos.update(id, { estado: nuevoEstado });
+            await this.cargar();
+        },
+
         // ── Clientes ─────────────────────────────────────────────────
         get clientesFiltrados() {
             if (!this.busquedaClientes) return this.clientes;
