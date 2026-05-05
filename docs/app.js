@@ -480,15 +480,41 @@ function agendaApp() {
 
         // ── Backup ───────────────────────────────────────────────────
         async exportar() {
-            const datos = { version:3, exportado: new Date().toISOString(),
-                            clientes: this.clientes, tratamientos: this.tratamientos,
-                            turnos: this.turnos, historial: this.historialAll,
-                            diasBloqueados: this.diasBloqueados };
-            const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
-            const url  = URL.createObjectURL(blob);
-            const a    = document.createElement('a');
-            a.href = url; a.download = `agenda-backup-${new Date().toISOString().slice(0,10)}.json`;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            try {
+                const datos = { version: 3, exportado: new Date().toISOString(),
+                                clientes: this.clientes, tratamientos: this.tratamientos,
+                                turnos: this.turnos, historial: this.historialAll,
+                                diasBloqueados: this.diasBloqueados };
+                const json   = JSON.stringify(datos, null, 2);
+                const nombre = `agenda-backup-${new Date().toISOString().slice(0,10)}.json`;
+
+                // iOS/Android: usar share sheet nativo si está disponible
+                if (navigator.share) {
+                    const file = new File([json], nombre, { type: 'application/json' });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({ files: [file], title: 'Backup Agenda Andrea' });
+                            return;
+                        } catch (err) {
+                            if (err.name === 'AbortError') return; // usuario canceló
+                            // Si falla por otro motivo, cae al fallback
+                        }
+                    }
+                }
+
+                // Fallback: descarga directa (funciona en desktop y Android Chrome)
+                const blob = new Blob([json], { type: 'application/json' });
+                const url  = URL.createObjectURL(blob);
+                const a    = document.createElement('a');
+                a.href = url;
+                a.download = nombre;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            } catch (err) {
+                alert('Error al exportar: ' + err.message);
+            }
         },
 
         async importar(e) {
