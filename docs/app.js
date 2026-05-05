@@ -66,6 +66,10 @@ function agendaApp() {
 
         async init() {
             this.$watch('mensajeWA', val => localStorage.setItem('mensajeWA', val));
+            const hoy = new Date();
+            this.mesVista = hoy.getMonth();
+            this.anioVista = hoy.getFullYear();
+            this.diaSeleccionado = hoy.getDate();
             await this.cargar();
         },
 
