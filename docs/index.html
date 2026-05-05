@@ -173,7 +173,7 @@
                         </span>
                         <span class="relative z-10 text-xs font-semibold leading-none mb-1" x-text="dia"></span>
                         <div class="flex justify-center">
-                            <span x-show="turnosDia(dia).some(t => t.estado === 'impaga')"
+                            <span x-show="turnosDia(dia).length > 0"
                                   :class="diaSeleccionado===dia?'bg-white/40':'bg-pink-400'"
                                   class="w-1.5 h-1.5 rounded-full block"></span>
                         </div>
