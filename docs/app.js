@@ -131,6 +131,17 @@ function agendaApp() {
             );
         },
 
+        proximoTurnoConDeudaId(clienteId) {
+            const tieneDeuda = this.turnos.some(t =>
+                t.clienteId === clienteId && t.estado === 'impaga' && t.fecha < this.hoy
+            );
+            if (!tieneDeuda) return null;
+            const proximo = this.turnos
+                .filter(t => t.clienteId === clienteId && t.fecha >= this.hoy)
+                .sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora))[0];
+            return proximo ? proximo.id : null;
+        },
+
         esBloqueado(dia) {
             if (!dia) return false;
             const f = this.fechaStr(this.anioVista, this.mesVista, dia);
