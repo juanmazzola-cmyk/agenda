@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-_Actualizado: 2026-05-05_
+_Actualizado: 2026-05-06_
 
 ## Dos apps independientes — CRÍTICO
 
@@ -80,7 +80,7 @@ No hay autenticación; la app es mono-usuario.
 - Los turnos **futuros** nunca muestran estado de pago en ninguna vista, aunque tengan `estado === 'impaga'` en la DB
 - **Lista de clientes**: badge rojo "X sesión/es impaga/s" — método `impagasDe(clienteId)`, que filtra solo `fecha < hoy`
 - **Panel del día (grilla)**: badge rojo "Impaga" en el turno pasado no cobrado; badge naranja "Deuda" + fecha(s) en el próximo turno futuro del cliente si tiene deuda anterior — métodos `getBadgeTurno(t)` y `deudaFechasTexto(t)`
-- **Historial del cliente**: muestra todos los turnos (pasados sombreados, futuros destacados); el badge Pagada/Impaga solo aparece si `fecha <= hoy`, usando `:style` (NO `x-if`)
+- **Historial del cliente**: muestra todos los turnos (pasados sombreados, futuros destacados); el badge Pagada/Impaga solo aparece si `fecha <= hoy`, usando `:style` (NO `x-if`); el importe también usa `fecha <= hoy` (NO `<`), para que los turnos del día actual muestren el valor
 
 ## Datos del celular (Dexie)
 
