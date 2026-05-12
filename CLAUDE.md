@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-_Actualizado: 2026-05-06_
+_Actualizado: 2026-05-11_
 
 ## Dos apps independientes — CRÍTICO
 
@@ -111,6 +111,8 @@ Versión actual de Dexie: **v3**. Al agregar stores, crear `db.version(4).stores
 **Historial** — `recargarHistorial()` usa `.toArray()` + `.sort()` en JS (NO `.reverse().sortBy()` de Dexie, que no funciona correctamente). Muestra todos los turnos del cliente (pasados y futuros).
 
 **`cerrarModal()`** — limpia `modalActivo`, `historialClienteId`, `busquedaTurnoCliente` y `dropdownClienteTurno`.
+
+**Validación horario duplicado** — `horarioOcupado` (bool) se actualiza llamando a `verificarHorario()` desde el `@change` de los inputs de fecha y hora. Muestra un texto rojo inline debajo del campo hora. El método excluye el turno actual (por `id`) para que editar un turno existente no se dispare como falso positivo. `guardarTurno()` también valida como último respaldo. Resetear `horarioOcupado = false` al abrir el modal (nuevo y edición).
 
 **Backup / Export** — `exportar()` usa `navigator.share()` con File API en iOS/Android (abre el share sheet nativo); fallback a `<a download>` con blob URL en desktop. `URL.revokeObjectURL` se llama con `setTimeout(1000)` para evitar cancelar la descarga. El import maneja dos formatos: nuestro formato (`clientes`/`turnos`) y un formato React legacy (`clients`/`appointments`). Al importar formato React, todos los turnos se guardan como `'pagado'` (los futuros no tienen estado de pago real aún).
 
