@@ -36,6 +36,7 @@ function agendaApp() {
         modalActivo: null,
         modoEdicion: false,
         formTurno: {},
+        horarioOcupado: false,
         formCliente: {},
         busquedaTurnoCliente: '',
         dropdownClienteTurno: false,
@@ -221,6 +222,7 @@ function agendaApp() {
             const fecha = dia ? this.fechaStr(this.anioVista, this.mesVista, dia) : '';
             this.formTurno = { fecha, hora: '09:00', clienteId: '', tratamientoId: '', notas: '', estado: 'impaga', valor: 0 };
             this.busquedaTurnoCliente = ''; this.dropdownClienteTurno = false;
+            this.horarioOcupado = false;
             this.modoEdicion = false; this.modalActivo = 'turno';
         },
 
@@ -229,6 +231,7 @@ function agendaApp() {
             const c = this.clientes.find(c => c.id === Number(t.clienteId));
             this.busquedaTurnoCliente = c ? c.nombre + (c.apellido ? ' '+c.apellido : '') : '';
             this.dropdownClienteTurno = false;
+            this.horarioOcupado = false;
             this.modoEdicion = true; this.modalActivo = 'turno';
         },
 
@@ -236,6 +239,15 @@ function agendaApp() {
             this.formTurno.clienteId = c.id;
             this.busquedaTurnoCliente = c.nombre + (c.apellido ? ' '+c.apellido : '');
             this.dropdownClienteTurno = false;
+        },
+
+        async verificarHorario() {
+            if (!this.formTurno.fecha || !this.formTurno.hora) { this.horarioOcupado = false; return; }
+            const dup = await db.turnos
+                .where({ fecha: this.formTurno.fecha, hora: this.formTurno.hora })
+                .filter(t => t.id !== this.formTurno.id)
+                .first();
+            this.horarioOcupado = !!dup;
         },
 
         async guardarTurno() {
