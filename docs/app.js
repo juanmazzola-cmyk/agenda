@@ -250,6 +250,11 @@ function agendaApp() {
                 estado: this.formTurno.estado || 'impaga',
                 valor: Number(this.formTurno.valor) || 0,
             };
+            const duplicado = await db.turnos
+                .where({ fecha: d.fecha, hora: d.hora })
+                .filter(t => t.id !== this.formTurno.id)
+                .first();
+            if (duplicado) { alert('Ya hay un turno en ese día y horario.'); return; }
             this.formTurno.id ? await db.turnos.update(this.formTurno.id, d) : await db.turnos.add(d);
             await this.cargar(); this.cerrarModal();
         },
